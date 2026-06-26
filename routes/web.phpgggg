@@ -1,0 +1,48 @@
+<?php
+
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
+
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+*/
+
+// =========================
+// Login / Logout
+// =========================
+Route::get('/', function () {
+    return redirect('/login');
+});
+
+Route::get('/login', [AuthController::class, 'loginPage'])->name('login');
+Route::post('/login-check', [AuthController::class, 'loginCheck'])->name('login.check');
+Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
+
+
+// =========================
+// Dashboard
+// =========================
+Route::get('/dashboard', [AuthController::class, 'dashboard'])->name('dashboard');
+
+
+// =========================
+// User Management
+// =========================
+Route::get('/add-user', [AuthController::class, 'addUserPage'])->name('add.user');
+Route::post('/save-user', [AuthController::class, 'saveUser'])->name('save.user');
+Route::get('/user-list', [AuthController::class, 'userList'])->name('user.list');
+
+
+// =========================
+// News Dashboard
+// =========================
+Route::get('/news-dashboard', [AuthController::class, 'newsDashboard'])->name('news.dashboard');
+
+
+// =========================
+// News Sync
+// =========================
+Route::get('/sync-news', [AuthController::class, 'syncNews'])->name('sync.news');
+Route::get('/sync-site/{siteName}', [AuthController::class, 'syncOneSite'])->name('sync.site');

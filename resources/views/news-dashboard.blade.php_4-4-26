@@ -1,0 +1,187 @@
+@extends('layout')
+
+@section('content')
+
+<div class="compact-container">
+
+  
+    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+        <h5 class="mb-0">News Dashboard</h5>
+
+        <button id="syncBtn" class="btn btn-success btn-sm">
+            <span id="syncBtnText">Fetch New Post</span>
+            <span id="syncSpinner" class="spinner-border spinner-border-sm d-none" role="status"></span>
+        </button>
+    </div>
+
+    
+    <form method="GET" action="{{ route('news.dashboard') }}" class="row g-2 mb-3">
+        <div class="col-md-2">
+            <input type="text" name="search" class="form-control form-control-sm"
+                   placeholder="Search posts..." value="{{ $search }}">
+        </div>
+        <!-- /---search by date--/ -->
+        <div class="col-md-2">
+            <input type="text" name="search" class="form-control form-control-sm"
+                   placeholder="Search posts..." value="{{ $search }}">
+        </div>
+        <!-- /--search by month--/ -->
+        <div class="col-md-2">
+            <!-- <input type="month" name="month" id="month" class="form-control form-control-sm"
+                   placeholder="Search month" value="{{ isset($month) ? $month : '' }}"> -->
+            <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+            <input type="text" class="form-control" value="03/04/2014">
+        </div>
+
+        <div class="col-md-2">
+            <select name="site" class="form-select form-select-sm">
+                <option value="">All Sites</option>
+                @foreach($siteList as $site)
+                    <option value="{{ $site }}" {{ $siteFilter == $site ? 'selected' : '' }}>
+                        {{ $site }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
+
+        <div class="col-md-3 d-flex gap-2">
+            <button type="submit" class="btn btn-primary btn-sm w-100">Filter</button>
+            <a href="{{ route('news.dashboard') }}" class="btn btn-secondary btn-sm w-100">Reset</a>
+        </div>
+    </form>
+
+   
+    @forelse($posts as $post)
+        <div class="card news-card mb-2">
+            <div class="card-body p-2">
+
+             @php
+                $mainLink = count($post->sites) > 0 ? $post->sites[0]->post_link : '#';
+            @endphp
+                <!-- <div class="news-title">
+                    {{ $post->title }}
+                </div> -->
+                <a href="{{ $mainLink }}" target="_blank" class="post-link">
+                    <div class="news-title">
+                        {{ $post->title }}
+                    </div>
+                </a>
+
+                <div class="news-date">
+                    {{ $post->formatted_date }}
+                </div>
+
+                <div class="site-links">
+                    @forelse($post->sites as $site)
+                        <a href="{{ $site->post_link }}"
+                           target="_blank"
+                           class="btn btn-sm btn-primary site-btn">
+                            {{ $site->site_name }}
+                        </a>
+                    @empty
+                        <span style="font-size:11px;color:#999;">No site links</span>
+                    @endforelse
+                </div>
+
+            </div>
+        </div>
+    @empty
+        <div class="alert alert-warning">No posts found.</div>
+    @endforelse
+
+    <div class="d-flex custom-pagination">
+        {{ $posts->links('pagination::bootstrap-5') }}
+        <!-- {{ $posts->links() }} -->
+          
+    </div>
+
+</div>
+
+<style>
+.compact-container{
+    font-size:12px;
+}
+.news-card{
+    border-radius:12px;
+    padding:4px 8px;
+    transition:0.2s;
+    border:1px solid #2f2f2f;
+    background:#1f1f1f;
+}
+.news-card:hover{
+    transform:scale(1.01);
+}
+.news-title{
+    font-size:13px;
+    font-weight:600;
+    margin-bottom:2px;
+    color:#fff;
+}
+.news-date{
+    font-size:11px;
+    color:#aaa;
+    margin-bottom:6px;
+}
+.site-btn{
+    font-size:10px;
+    padding:3px 8px;
+    margin-right:4px;
+    margin-top:3px;
+    border-radius:20px;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    let syncBtn = document.getElementById('syncBtn');
+
+    if(syncBtn){
+        syncBtn.addEventListener('click', function () {
+            let btn = document.getElementById('syncBtn');
+            let spinner = document.getElementById('syncSpinner');
+            let text = document.getElementById('syncBtnText');
+
+            btn.disabled = true;
+            spinner.classList.remove('d-none');
+            text.innerText = 'Syncing...';
+
+            fetch("{{ route('sync.news') }}")
+                .then(response => response.json())
+                .then(data => {
+                    alert(data.message || 'Sync completed!');
+//                     alert(
+//     (data.message || 'Sync completed!') +
+//     "\nFetched: " + (data.total_fetched ?? 0) +
+//     "\nInserted: " + (data.total_inserted ?? 0) +
+//     "\nUpdated: " + (data.total_updated ?? 0)
+// );
+                    location.reload();
+                })
+                .catch(error => {
+                    alert('Sync failed!');
+                    console.error(error);
+                })
+                .finally(() => {
+                    btn.disabled = false;
+                    spinner.classList.add('d-none');
+                    text.innerText = '🔄 Sync News';
+                });
+        });
+    }
+});
+</script>
+
+<style>
+    .post-link{
+    text-decoration:none;
+    color:inherit;
+    display:block;
+    }
+
+    .post-link:hover .news-title{
+        color:#4ea1ff;
+        text-decoration:underline;
+    }
+</style>
+
+@endsection

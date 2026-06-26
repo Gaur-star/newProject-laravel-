@@ -1,0 +1,543 @@
+@extends('layout')
+
+@section('content')
+
+<div class="compact-container">
+
+    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+        <h5 class="mb-0">News Dashboard</h5>
+
+        <button id="syncBtn" class="btn btn-success btn-sm">
+            <span id="syncBtnText">Fetch New Post</span>
+            <span id="syncSpinner" class="spinner-border spinner-border-sm d-none" role="status"></span>
+        </button>
+    </div>
+
+    <!-- <form method="GET" action="{{ route('news.dashboard') }}" class="row g-2 mb-3">
+        <div class="col-md-5">
+            <input type="text" name="search" class="form-control form-control-sm"
+                   placeholder="Search posts..." value="{{ $search }}">
+        </div>
+
+        <div class="col-md-4">
+            <select name="site" class="form-select form-select-sm">
+                <option value="">All Sites</option>
+                @foreach($siteList as $site)
+                    <option value="{{ $site }}" {{ $siteFilter == $site ? 'selected' : '' }}>
+                        {{ $site }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
+
+        <div class="col-md-3 d-flex gap-2">
+            <button type="submit" class="btn btn-primary btn-sm w-100">Filter</button>
+            <a href="{{ route('news.dashboard') }}" class="btn btn-secondary btn-sm w-100">Reset</a>
+        </div>
+    </form> -->
+
+    <form method="GET" action="{{ route('news.dashboard') }}" class="row g-2 mb-3">
+
+   
+    <div class="col-md-3">
+        <input type="text" name="search" class="form-control form-control-sm"
+               placeholder="Search posts..." value="{{ $search }}">
+    </div>
+
+  
+    <div class="col-md-2">
+        <select name="site" class="form-select form-select-sm">
+            <option value="">All Sites</option>
+            @foreach($siteList as $site)
+                <option value="{{ $site }}" {{ $siteFilter == $site ? 'selected' : '' }}>
+                    {{ $site }}
+                </option>
+            @endforeach
+        </select>
+    </div>
+
+  
+    <div class="col-md-2">
+        <select name="month" class="form-select form-select-sm">
+            <option value="">All Months</option>
+            <option value="1" {{ $monthFilter == 1 ? 'selected' : '' }}>January</option>
+            <option value="2" {{ $monthFilter == 2 ? 'selected' : '' }}>February</option>
+            <option value="3" {{ $monthFilter == 3 ? 'selected' : '' }}>March</option>
+            <option value="4" {{ $monthFilter == 4 ? 'selected' : '' }}>April</option>
+            <option value="5" {{ $monthFilter == 5 ? 'selected' : '' }}>May</option>
+            <option value="6" {{ $monthFilter == 6 ? 'selected' : '' }}>June</option>
+            <option value="7" {{ $monthFilter == 7 ? 'selected' : '' }}>July</option>
+            <option value="8" {{ $monthFilter == 8 ? 'selected' : '' }}>August</option>
+            <option value="9" {{ $monthFilter == 9 ? 'selected' : '' }}>September</option>
+            <option value="10" {{ $monthFilter == 10 ? 'selected' : '' }}>October</option>
+            <option value="11" {{ $monthFilter == 11 ? 'selected' : '' }}>November</option>
+            <option value="12" {{ $monthFilter == 12 ? 'selected' : '' }}>December</option>
+        </select>
+    </div>
+
+  
+    <div class="col-md-2">
+        <select name="year" class="form-select form-select-sm">
+            <option value="">All Years</option>
+            @foreach($yearList as $year)
+                <option value="{{ $year }}" {{ $yearFilter == $year ? 'selected' : '' }}>
+                    {{ $year }}
+                </option>
+            @endforeach
+        </select>
+    </div>
+
+  
+    <div class="col-md-3 d-flex gap-2">
+        <button type="submit" class="btn btn-primary btn-sm w-100">Filter</button>
+        <a href="{{ route('news.dashboard') }}" class="btn btn-secondary btn-sm w-100">Reset</a>
+    </div>
+
+</form>
+
+    @forelse($posts as $post)
+        <div class="card news-card mb-2">
+            <div class="card-body p-2">
+
+             @php
+                $mainLink = count($post->sites) > 0 ? $post->sites[0]->post_link : '#';
+            @endphp
+            
+                <a href="{{ $mainLink }}" target="_blank" class="post-link">
+                    <div class="news-title">
+                        {{ $post->title }}
+                    </div>
+                </a>
+
+                <div class="news-date">
+                    {{ $post->formatted_date }}
+                </div>
+
+                <div class="news-right">
+                    <!-- @if($post->main_image)
+                        <img src="{{ $post->main_image }}" class="news-image">
+                    @else
+                        <div class="no-image">
+                            No Image
+                        </div>
+                    @endif -->
+                </div>
+
+                <!-- <div class="site-links">
+                    @forelse($post->sites as $site)
+                        <a href="{{ $site->post_link }}"
+                           target="_blank"
+                           class="btn btn-sm btn-primary site-btn">
+                            {{ $site->site_name }}
+                        </a>
+                    @empty
+                        <span style="font-size:11px;color:#999;">No site links</span>
+                    @endforelse
+                </div> -->
+
+                <div class="news-card-body">
+
+                    <!-- <div class="news-card-body d-flex gap-3">
+
+    
+                        <div class="news-left">
+                             <p class="news-content">
+                                {{ \Illuminate\Support\Str::limit($post->main_content, 250) }}
+                            </p> -->
+
+                            <!-- <div class="mb-2">
+                                <a href="{{ $post->main_link }}" target="_blank" class="btn btn-outline-primary btn-sm">
+                                    🔗 Open Original
+                                </a>
+                            </div> 
+
+                            @if(count($post->sites) > 0)
+                                <div class="site-buttons mb-2">
+                                    @foreach($post->sites as $site)
+                                        <a href="{{ $site->post_link }}" target="_blank" class="btn btn-sm btn-site">
+                                            {{ $site->site_name }}
+                                        </a>
+                                    @endforeach
+                                </div>
+                            @endif-->
+
+                            <!-- <button class="btn btn-sm btn-light" onclick="toggleDetails('details-{{ $post->id }}')">
+                                View Details
+                            </button> -->
+                       <!--  </div>
+
+  
+                        <div class="news-right">
+                            @if($post->main_image)
+                                <img src="{{ $post->main_image }}" class="news-image">
+                            @else
+                                <div class="no-image">
+                                    No Image
+                                </div>
+                            @endif
+                        </div>
+
+                    </div> -->
+                    
+                                      
+                    @if(count($post->sites) > 0)
+                        <div class="site-buttons mb-3">
+                            <label class="small fw-bold text-muted d-block mb-2">Available in Sites:</label>
+                            @foreach($post->sites as $site)
+                                <a href="{{ $site->post_link }}" target="_blank" class="btn btn-sm btn-site">
+                                    {{ $site->site_name }}
+                                </a>
+                            @endforeach
+                        </div>
+                    @endif
+
+               
+                    <button class="btn btn-sm btn-light toggle-details" onclick="toggleDetails('details-{{ $post->id }}')">
+                        View Details
+                    </button>
+
+                    <div id="details-{{ $post->id }}" class="post-details mt-3 d-none">
+                        <div class="detail-box">
+                            <p><strong>Post ID:</strong> {{ $post->id }}</p>
+                            <p><strong>Published:</strong> {{ $post->formatted_date }}</p>
+                            <p><strong>Total Sites:</strong> {{ count($post->sites) }}</p>
+
+                            <div class="mb-3">
+                                <div class="col-sm-12">
+                                    <p class="news-content"><strong>Post Content:</strong><br/>
+                                    {{ \Illuminate\Support\Str::limit($post->main_content, 350) }}
+                                    </p>
+                                </div>
+                                <div class="col-sm-6" >
+                                    @if($post->main_image)
+                                        <img src="{{ $post->main_image }}" class="news-image">
+                                    @else
+                                        <div class="no-image">
+                                            No Image
+                                        </div>
+                                    @endif
+                                </div>                                
+                            </div>
+
+                            <div class="mb-3">
+                                <a href="{{ $post->main_link }}" target="_blank" class="btn btn-outline-primary btn-sm">
+                                    Open Original Post
+                                </a>
+                            </div>
+
+                            <!-- <div class="detail-links mt-2">
+                                @foreach($post->sites as $site)
+                                    <div class="site-detail-row">
+                                        <span class="site-name">{{ $site->site_name }}</span>
+                                        <a href="{{ $site->post_link }}" target="_blank" class="btn btn-sm btn-outline-dark">
+                                            Open
+                                        </a>
+                                    </div>
+                                @endforeach
+                            </div> -->
+                        </div>
+                    </div>
+
+                </div> 
+
+            </div>
+        </div>
+    @empty
+        <div class="alert alert-warning">No posts found.</div>
+    @endforelse
+
+    <div class="d-flex custom-pagination">
+        {{ $posts->links('pagination::bootstrap-5') }}
+        <!-- {{ $posts->links() }} -->
+          
+    </div>
+
+</div>
+
+<style>
+.compact-container{
+    font-size:12px;
+}
+.news-card{
+    border-radius:12px;
+    padding:4px 8px;
+    transition:0.2s;
+    border:1px solid #2f2f2f;
+    background:#1f1f1f;
+}
+.news-card:hover{
+    transform:scale(1.01);
+}
+.news-title{
+    font-size:13px;
+    font-weight:600;
+    margin-bottom:2px;
+    color:#140c0c;
+}
+.news-date{
+    font-size:11px;
+    color:#aaa;
+    margin-bottom:6px;
+}
+.site-btn{
+    font-size:10px;
+    padding:3px 8px;
+    margin-right:4px;
+    margin-top:3px;
+    border-radius:20px;
+}
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.page-header h2 {
+    margin: 0;
+    font-weight: 700;
+}
+
+.text-muted {
+    color: #888;
+    font-size: 14px;
+}
+
+.filter-card {
+    border: none;
+    border-radius: 14px;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.06);
+}
+
+.news-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
+}
+
+.news-card {
+    background: #fff;
+    border-radius: 18px;
+    padding: 18px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+    transition: all 0.25s ease;
+    border: 1px solid #eee;
+}
+
+.news-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 22px rgba(0,0,0,0.09);
+}
+
+.news-card-header {
+    margin-bottom: 12px;
+}
+
+.news-title {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.post-link {
+    text-decoration: none;
+    color: #111;
+}
+
+.post-link:hover {
+    color: #0d6efd;
+}
+
+.news-date {
+    font-size: 13px;
+    color: #777;
+}
+
+.news-content {
+    font-size: 14px;
+    color: #444;
+    line-height: 1.7;
+    margin-bottom: 15px;
+}
+
+.site-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.btn-site {
+    background: #f1f5ff;
+    color: #0d6efd;
+    border: 1px solid #dbe7ff;
+    border-radius: 50px;
+    padding: 6px 14px;
+    font-size: 12px;
+    text-decoration: none;
+}
+
+.btn-site:hover {
+    background: #0d6efd;
+    color: #fff;
+}
+
+.post-details {
+    background: #f9fafc;
+    border-radius: 12px;
+    padding: 15px;
+    border: 1px solid #ececec;
+}
+
+.detail-box p {
+    margin-bottom: 8px;
+    font-size: 14px;
+}
+
+.site-detail-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #fff;
+    border: 1px solid #eee;
+    border-radius: 10px;
+    padding: 10px 12px;
+    margin-bottom: 8px;
+}
+
+.site-name {
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.loading-spinner {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.45);
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.spinner-box {
+    background: #fff;
+    padding: 30px 40px;
+    border-radius: 16px;
+    text-align: center;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.18);
+}
+
+.empty-box {
+    text-align: center;
+    padding: 60px 20px;
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.06);
+}
+
+@media (max-width: 992px) {
+    .news-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* .news-card-body {
+    display: flex;
+    gap: 15px;
+} */
+
+/* .news-left {
+    flex: 2;
+}
+
+.news-right {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+} */
+
+.news-image {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    border-radius: 12px;
+}
+
+.no-image {
+    width: 100%;
+    height: auto;
+    background: #f1f1f1;
+    border-radius: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 12px;
+    color: #888;
+}
+
+
+</style>
+
+<script>
+
+    function toggleDetails(id) {
+        let box = document.getElementById(id);
+        box.classList.toggle('d-none');
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+    let syncBtn = document.getElementById('syncBtn');
+
+    if(syncBtn){
+        syncBtn.addEventListener('click', function () {
+            let btn = document.getElementById('syncBtn');
+            let spinner = document.getElementById('syncSpinner');
+            let text = document.getElementById('syncBtnText');
+
+            btn.disabled = true;
+            spinner.classList.remove('d-none');
+            text.innerText = 'Syncing...';
+
+            fetch("{{ route('sync.news') }}")
+                .then(response => response.json())
+                .then(data => {
+                    alert(data.message || 'Sync completed!');
+                        // alert(
+                        //     (data.message || 'Sync completed!') +
+                        //     "\nFetched: " + (data.total_fetched ?? 0) +
+                        //     "\nInserted: " + (data.total_inserted ?? 0) +
+                        //     "\nUpdated: " + (data.total_updated ?? 0)
+                        // );
+                    location.reload();
+                })
+                .catch(error => {
+                    alert('Sync failed!');
+                    console.error(error);
+                })
+                .finally(() => {
+                    btn.disabled = false;
+                    spinner.classList.add('d-none');
+                    text.innerText = '🔄 Sync News';
+                });
+        });
+    }
+});
+</script>
+
+<style>
+    .post-link{
+        text-decoration:none;
+        color:inherit;
+        display:block;
+    }
+
+    .post-link:hover .news-title{
+        color:#4ea1ff;
+        text-decoration:underline;
+    }
+</style>
+
+@endsection

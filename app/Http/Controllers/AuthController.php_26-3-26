@@ -1,0 +1,307 @@
+<?php
+
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Cache;
+
+class AuthController extends Controller
+{
+
+
+    public function showLogin()
+    {
+        return view('login');
+    }
+
+
+    public function login(Request $request)
+    {
+        $credentials = $request->only('email', 'password');
+
+        if (Auth::attempt($credentials)) {
+            return redirect('/dashboard');
+        }
+
+        return back()->with('error', 'Invalid Email or Password');
+    }
+
+
+    public function dashboard()
+    {
+        if (!Auth::check()) {
+            return redirect('/login');
+        }
+
+        // return view('layout');
+        return view('dashboard');
+    }
+
+
+    public function logout()
+    {
+        Auth::logout();
+        return redirect('/login');
+    }
+
+
+    public function showAddUser(){
+        if(!Auth::check()){
+            return redirect('/login');
+        }
+        return view('add-user');
+    }
+
+
+    public function storeUser(Request $request){
+        if(!Auth::check()){
+            return redirect('/login');
+        }
+
+        $request->validate([
+            'name' => 'required',
+            'email' => 'required | email | unique:users',
+            'password' => 'required | min:2'
+        ]);
+
+        User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password)
+        ]);
+
+        return redirect('/dashboard')->with('success', 'User Added Successfully');
+    }
+
+
+    // public function allPosts(){
+    public function newsDashboard(){
+
+        if(!Auth::check()){
+            return redirect('/login');
+        }
+
+        $sites = [      
+           
+            [
+                'key' => '1',
+                'name' => 'yourdigitalwal.com',
+                'url' => 'https://yourdigitalwall.com/'
+            ],
+
+            // [
+            //     'key' => '2',
+            //     'name' => 'pronewsreport.com',
+            //     'url' => 'https://pronewsreport.com/'
+            // ],
+             [
+                'key' => '4',
+                'name' => 'isstories.com',
+                'url' => 'https://www.isstories.com/'
+            ],
+
+        ];
+        $postsCollection = Cache::remember('all_news_posts', 600, function () use ($sites) {
+        $allPosts = [];
+
+       foreach($sites as $site){
+
+       $page = 1;
+
+
+       do{
+            $apiData = $site['url'] .'/wp-json/wp/v2/posts?per_page=100&page='.$page."&orderby=date&order=desc";
+
+
+            $responseData = @file_get_contents($apiData);
+
+            if(!$responseData) break;
+
+            $posts = json_decode($responseData);
+
+            if (!$posts) break;
+        // dd($posts);
+
+            foreach ($posts as $post) {
+                // dd($post->link);
+                $title = trim(strip_tags($post->title->rendered));
+                // $title = trim(strip_tags($post->title->rendered));
+
+                // Unique key (lowercase title)
+                $key = strtolower($title);
+                // $plink = $post->link;
+                
+                        if (!isset($allPosts[$key])) {
+
+                            $allPosts[$key] = [
+                                'title' => $title,                    
+                                'date' => $post->date,
+                                'formatted_date' => date('d M Y, h:i A', strtotime($post->date)),
+                                'link' => $post->link,
+                                'sites' => []
+                            ];
+                        }
+            
+
+                    $allPosts[$key]['sites'][] = [
+                    'site_name' => $site['name'],
+                    'link' => $post->link
+                ];
+
+
+            
+        }
+
+            $page++;
+         } while (true);
+    }
+
+     return collect($allPosts)->sortByDesc('date')->values();
+
+   });
+
+       /////////////////
+    //    foreach ($sites as $site) {
+
+    //     $page = 1;
+
+        // do {
+
+            // $api = $site['url']."/wp-json/wp/v2/posts?per_page=100&page=".$page;
+
+            // $response = @file_get_contents($api);
+
+            // if (!$response) break;
+
+            // $posts = json_decode($response);
+
+            // if (!$posts) break;
+
+            // foreach ($posts as $post) {
+
+                // $title = trim(strip_tags($post->title->rendered));
+
+                // if (!isset($allPosts[$title])) {
+
+                //     $allPosts[$title] = [
+                //         'title' => $title,
+                //         'sites' => []
+                //     ];
+                // }
+
+                // $allPosts[$title]['sites'][] = [
+                //     'site_name' => $site['name'],
+                //     'link' => $post->link
+                // ];
+           // }
+
+    //         $page++;
+
+    //     } while (count($posts) > 0);
+
+    // }
+
+    ////////////////
+       
+    //    $apiUrl = $site['url'] .'/wp-json/wp/v2/posts';
+       
+
+        // $posts = json_decode(@file_get_contents($apiUrl));
+
+        // echo '<pre>';
+        // print_r($apiUrl);
+        // print_r(json_decode($data));
+        // die();
+
+        // if (!$posts) continue;
+
+
+            
+            // if (!isset($allPosts[$title])) {
+            //     $allPosts[$title] = [
+            //         'title' => $title,
+            //         'sites' => []
+            //     ];
+            // }
+
+        //     $allPosts[$title]['sites'][] = [
+        //         'site_name' => $site['name'],
+        //         'link' => $post->link
+        //     ];
+        // }
+
+    //     echo '<pre>';
+    //    print_r($allPosts);
+    // foreach ($posts as $post) {
+    //         $title = trim(strip_tags($post->title->rendered));
+
+    //         if (!isset($allPosts[$title])) {
+    //             $allPosts[$title] = [
+    //                 'title' => $title,
+    //                 'sites' => []
+    //             ];
+    //         }
+
+    //         $allPosts[$title]['sites'][] = [
+    //             'site_name' => $site['name'],
+    //             'link' => $post->link
+    //         ];
+    //     }
+    //    die();
+        // return view(
+        //     'all-posts', compact('allPosts')
+        // );
+    //     return view(
+    //         'news-dashboard', compact('allPosts')
+    //     );
+
+    // }
+   
+        // $postsCollection = collect($allPosts)->values();
+        
+        // $postsCollection = $postsCollection->sortByDesc('date')->values();
+
+        $page = request()->get('page', 1);
+        $perPage = 10;
+
+        $paginatedPosts = new LengthAwarepaginator(
+            
+                    $postsCollection->forpage($page, $perPage),
+                    $postsCollection->count(),
+                    $perPage,
+                    $page,
+                    [
+                        'path' => request()->url(),
+                        'query' => request()->query()
+                    ]
+        );
+
+        
+    
+//  dd($allPosts);
+    // return view('news-dashboard', ['posts' => $allPosts]);
+    // dd($paginatedPosts);
+    return view('news-dashboard', [
+        'posts' => $paginatedPosts,
+        'sites' => $sites
+        ]);
+}
+
+
+
+
+
+}
+
+    
+
+
+
+
+
+

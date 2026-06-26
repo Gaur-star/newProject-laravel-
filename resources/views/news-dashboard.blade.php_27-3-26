@@ -1,0 +1,62 @@
+@extends('layout')
+
+@section('content')
+
+    <h3  class="mb-3">WordPress News</h3>
+
+    @foreach($posts as $post)
+    
+    @php
+        $mainlink = $post['sites'][0]['link'] ?? 'javascript:void(0)';
+    @endphp
+    
+            <a href="{{ $mainlink }}" target="_blank" style="text-decoration:none; color:inherit;">
+
+            <div class="card mb-2 hover-card">
+
+                <div class="card-body p-2">
+
+                    <div style="font-size:13px; font-weight:600;">
+                        <a href="{{ $post['link'] }}" target="_blank" style="all: unset; cursor: pointer;">
+                            {{ $post['title'] }}
+                        </a>
+                    </div>
+
+                    <div style="font-size:11px; color:gray;">
+                        {{ $post['formatted_date'] }}
+                    </div>
+
+                    <div>
+                        @foreach($post['sites'] as $site)
+                        <a href="{{ $site['link'] }}" target="_blank" class="btn btn-sm btn-primary" style="font-size:10px; padding:2px 6px;">
+                            {{ $site['site_name'] }}
+                        </a>
+                        @endforeach
+                    </div>
+
+                </div>
+
+            </div>
+
+        </a>
+    @endforeach
+
+    <!-- {{ $posts-> links() }} -->
+
+<div class="d-flex custom-pagination">
+    {{ $posts->links('pagination::bootstrap-5') }}
+    </div> 
+
+    <style>
+/* 
+        .hover-card:hover{
+        background:#2c2c2c;
+        cursor:pointer;
+        transform:scale(1.01);
+        transition:0.2s;
+        } */
+
+    </style>
+
+@endsection
+

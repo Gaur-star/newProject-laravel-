@@ -1,0 +1,36 @@
+@extends('layout')
+
+@section('content')
+
+    <h3>WordPress News</h3>
+
+    @foreach($posts as $post)
+
+    <div class="card mb-3">
+
+    <div class="card-body">
+
+    <h5>{{ $post['title'] }}</h5>
+
+    @foreach($post['sites'] as $site)
+
+    <a href="{{ $site['link'] }}" target="_blank" class="btn btn-sm btn-primary">
+    {{ $site['site_name'] }}
+    </a>
+
+    @endforeach
+
+    </div>
+
+    </div>
+
+    @endforeach
+
+    <!-- {{ $posts-> links() }} -->
+
+    <div class="d-flex custom-pagination">
+        {{ $posts->links('pagination::bootstrap-5') }}
+    </div>
+
+@endsection
+

@@ -1,0 +1,66 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+</head>
+<body> -->
+
+@extends('layout')
+
+@section('content')
+
+    <h3>Dashboard</h3>
+
+    @if(session('success'))
+        <!-- <p style="color:green;">{{ session('success') }}</p> -->
+        <div class="alert alert-success">
+            {{ session('success') }}
+        </div>
+    @endif
+
+    <!-- <h2> Welcome {{ auth()->user()->name }}</h2> -->
+
+    <!-- <a href="/logout">logout</a> -->
+
+    <!-- <a href="/add-user">Add New User</a> -->
+    <div class="row">
+
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5>Total Users</h5>
+                    <p>manage users from sidebar</p>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5>Wordpress Posts</h5>
+                    <p>View all posts from sites</p>
+                    <a href="/news-dashboard" class="btn btn-primary btn-sm"></a>
+                </div>
+            </div>
+        </div>
+        <!-- <br>
+        <br>
+        <a href="/all-posts"> View All Posts </a>
+
+        <br>
+        <br> -->
+        
+    </div>
+
+
+@endsection    
+<!-- </body>
+</html>
+
+<br><br> -->
+@section('content')
+<h3>hi</h3>
+@endsection

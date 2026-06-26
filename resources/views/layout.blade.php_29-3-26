@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net" defer></script>
+<style>
+    body{
+        margin: 0;
+        background: white;
+    }
+    .sidebar{
+            height: 100vh;
+            width: 220px;
+            position: fixed;
+            background: #343a40;
+            color: white;
+            padding-top: 20px;
+        }
+    .sidebar a{
+        display: block;
+        color: white;
+        padding: 12px;
+        text-decoration: none;
+    }    
+    .sidebar a:hover{
+        background : #4945057;
+    }
+    .content{
+        margin-left: 220px;
+        padding: 20px;
+    }
+
+    .header{
+        background : white;
+        padding : 10px 20px;
+        box-shadow : 0 2px 5px rgba(0,0,0,0.1);
+        margin : 20px;
+    }
+    
+    .custom-pagination {
+        color: #0fb6cc; 
+        border: 1px solid #7e1414; 
+        margin: 0 2px; 
+    }
+    .custom-pagination  {
+        background-color: #0fb6cc; 
+        border-color: #0fb6cc; 
+        color: white; 
+    }
+
+    .custom-pagination .pagination {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+    }
+</style>
+    
+</style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <h4 class="text-center">Admin</h4>
+        <a href="/dashboard">Dashboard</a>
+        <a href="/sync-news">Insert Latest Posts</a>
+        <a href="/add-user">Add User</a>
+        <a href="/news-dashboard">News dashboard</a>
+        <a href="/logout">Logout</a>
+    </div>
+
+    <div class="content">
+        <div class="header">
+            <h2> Welcome {{ auth()->user()->name }}</h2>
+        </div>
+
+        @yield('content')
+
+
+    </div>
+    
+</body>
+</html>

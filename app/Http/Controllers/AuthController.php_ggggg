@@ -1,0 +1,432 @@
+
+
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Http;
+use App\Models\User;
+
+class AuthController extends Controller
+{
+    public function loginPage()
+    {
+        return view('login');
+    }
+
+   
+    public function loginCheck(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required'
+        ]);
+
+        if (Auth::attempt([
+            'email' => $request->email,
+            'password' => $request->password
+        ])) {
+            return redirect()->route('dashboard');
+        }
+
+        return back()->with('error', 'Invalid email or password');
+    }
+
+    public function logout()
+    {
+        Auth::logout();
+        return redirect('/login');
+    }
+
+   public function dashboard()
+    {
+        if (!Auth::check()) {
+            return redirect('/login');
+        }
+
+        $totalUsers = User::count();
+        $totalPosts = DB::table('news_posts')->count();
+        $totalSites = DB::table('news_post_sites')
+            ->where('is_active', 1)
+            ->distinct('site_name')
+            ->count('site_name');
+
+        return view('dashboard', compact('totalUsers', 'totalPosts', 'totalSites'));
+    }
+
+    public function addUserPage()
+    {
+        if (!Auth::check()) {
+            return redirect('/login');
+        }
+
+        return view('add-user');
+    }
+
+    public function saveUser(Request $request)
+    {
+        if (!Auth::check()) {
+            return redirect('/login');
+        }
+
+        $request->validate([
+            'name' => 'required',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|min:4'
+        ]);
+
+        User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password)
+        ]);
+
+        return redirect()->back()->with('success', 'User added successfully');
+    }
+
+
+    public function userList()
+    {
+        if (!Auth::check()) {
+            return redirect('/login');
+        }
+
+        $users = User::orderBy('id', 'desc')->paginate(10);
+
+        return view('user-list', compact('users'));
+    }
+
+
+    public function newsDashboard()
+    {
+        if (!Auth::check()) {
+            return redirect('/login');
+        }
+
+        $search = request()->get('search');
+        //$siteFilter = request()->get('site');
+        $siteFilter = request()->get('site');
+        $fromDate = request()->get('from_date');
+        $toDate = request()->get('to_date');
+
+                        $query = DB::table('news_posts')
+                            ->whereIn('id', function ($sub) {
+                                $sub->select('news_post_id')
+                                    ->from('news_post_sites')
+                                    ->where('is_active', 1);
+                            });
+
+       
+        if (!empty($search)) {
+            $query->where('title', 'like', '%' . $search . '%');
+        }
+
+        if (!empty($siteFilter)) {
+            $query->whereIn('id', function ($sub) use ($siteFilter) {
+                $sub->select('news_post_id')
+                    ->from('news_post_sites')
+                    ->where('site_name', $siteFilter)
+                    ->where('is_active', 1);
+            });
+        }
+
+     
+        if (!empty($fromDate)) {
+            $query->whereDate('post_date', '>=', $fromDate);
+        }
+
+
+        if (!empty($toDate)) {
+            $query->whereDate('post_date', '<=', $toDate);
+        }
+
+        $posts = $query->orderBy('post_date', 'desc')->paginate(20);
+        $posts->appends(request()->query());
+
+        $postIds = collect($posts->items())->pluck('id')->toArray();
+
+        $allSites = collect([]);
+        if (!empty($postIds)) {
+            $allSites = DB::table('news_post_sites')
+                ->whereIn('news_post_id', $postIds)
+                ->where('is_active', 1)
+                ->orderBy('site_name')
+                ->get()
+                ->groupBy('news_post_id');
+        }
+
+        $siteList = DB::table('news_post_sites')
+            ->where('is_active', 1)
+            ->select('site_name')
+            ->distinct()
+            ->orderBy('site_name')
+            ->pluck('site_name');
+
+        foreach ($posts as $post) {
+            $post->formatted_date = !empty($post->post_date)
+                ? date('d M Y, h:i A', strtotime($post->post_date))
+                : '';
+
+            $post->sites = $allSites[$post->id] ?? collect([]);
+        }
+
+    return view('news-dashboard', compact(
+        'posts',
+        'siteList',
+        'search',
+        'siteFilter',
+        'fromDate',
+        'toDate'
+    ));
+    }
+
+
+    public function syncNews($siteName = null)
+    {
+        $sites = [
+         
+        ];
+
+     
+        if (!empty($siteName)) {
+
+            if (!isset($sites[$siteName])) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Invalid site'
+                ], 400);
+            }
+
+            $site = [
+                'name' => $siteName,
+                'url' => $sites[$siteName]
+            ];
+
+            $result = $this->syncSingleSite($site);
+
+            Cache::flush();
+
+            return response()->json([
+                'status' => 'success',
+                'message' => $siteName . ' sync completed',
+                'result' => $result
+            ]);
+        }
+
+        $summary = [];
+        $totalFetched = 0;
+        $totalInserted = 0;
+        $totalUpdated = 0;
+        $totalDeactivated = 0;
+
+        foreach ($sites as $name => $url) {
+            $site = [
+                'name' => $name,
+                'url' => $url
+            ];
+
+            $result = $this->syncSingleSite($site);
+
+            $summary[] = $result;
+            $totalFetched += $result['fetched'];
+            $totalInserted += $result['inserted'];
+            $totalUpdated += $result['updated'];
+            $totalDeactivated += $result['deactivated'];
+        }
+
+        Cache::flush();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'All sites sync completed',
+            'total_fetched' => $totalFetched,
+            'total_inserted' => $totalInserted,
+            'total_updated' => $totalUpdated,
+            'total_deactivated' => $totalDeactivated,
+            'site_summary' => $summary
+        ]);
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | SYNC SINGLE SITE
+    |--------------------------------------------------------------------------
+    */
+    private function syncSingleSite($site)
+    {
+        set_time_limit(0);
+        ini_set('memory_limit', '1024M');
+
+        $siteFetched = 0;
+        $siteInserted = 0;
+        $siteUpdated = 0;
+        $siteDeactivated = 0;
+        $errors = [];
+
+        $seenWpIds = [];
+        $page = 1;
+
+        while (true) {
+
+            $api = $site['url'] . "/wp-json/wp/v2/posts?per_page=100&page=" . $page . "&orderby=date&order=desc&_fields=id,date,link,title,status";
+
+            try {
+                $response = Http::timeout(60)
+                    ->withoutVerifying()
+                    ->get($api);
+
+                $httpCode = $response->status();
+
+                // Last page / invalid page
+                if ($httpCode == 400 || $httpCode == 404) {
+                    break;
+                }
+
+                if (!$response->successful()) {
+                    $errors[] = "Failed on page {$page} | HTTP {$httpCode}";
+                    break;
+                }
+
+                $posts = $response->json();
+
+            } catch (\Exception $e) {
+                $errors[] = "Failed on page {$page} | " . $e->getMessage();
+                break;
+            }
+
+            if (!is_array($posts) || count($posts) == 0) {
+                break;
+            }
+
+            foreach ($posts as $post) {
+
+                $siteFetched++;
+
+                $wpPostId = $post['id'] ?? null;
+                $title = trim(strip_tags($post['title']['rendered'] ?? ''));
+                $postDate = $post['date'] ?? null;
+                $postLink = $post['link'] ?? '#';
+                $postStatus = $post['status'] ?? 'publish';
+
+                if (!$wpPostId || $title == '') {
+                    continue;
+                }
+
+                $seenWpIds[] = $wpPostId;
+
+                $groupKey = md5(strtolower($title));
+               
+                $existingSitePost = DB::table('news_post_sites')
+                    ->where('site_name', $site['name'])
+                    ->where('wp_post_id', $wpPostId)
+                    ->first();
+
+                if ($existingSitePost) {
+
+                    $newsPostId = $existingSitePost->news_post_id;
+
+                   
+                    DB::table('news_posts')
+                        ->where('id', $newsPostId)
+                        ->update([
+                            'title' => $title,
+                            'unique_key' => $groupKey,
+                            'post_date' => $postDate,
+                            'updated_at' => now()
+                        ]);
+
+                   
+                    DB::table('news_post_sites')
+                        ->where('id', $existingSitePost->id)
+                        ->update([
+                            'post_title' => $title,
+                            'post_date' => $postDate,
+                            'post_link' => $postLink,
+                            'post_status' => $postStatus,
+                            'is_active' => 1,
+                            'updated_at' => now()
+                        ]);
+
+                    $siteUpdated++;
+
+                } else {
+
+                   
+                    $existingMainPost = DB::table('news_posts')
+                        ->where('unique_key', $groupKey)
+                        ->first();
+
+                    if ($existingMainPost) {
+                        $newsPostId = $existingMainPost->id;
+
+                        DB::table('news_posts')
+                            ->where('id', $newsPostId)
+                            ->update([
+                                'title' => $title,
+                                'post_date' => $postDate,
+                                'updated_at' => now()
+                            ]);
+                    } else {
+                        $newsPostId = DB::table('news_posts')->insertGetId([
+                            'title' => $title,
+                            'unique_key' => $groupKey,
+                            'post_date' => $postDate,
+                            'created_at' => now(),
+                            'updated_at' => now()
+                        ]);
+                    }
+
+                    DB::table('news_post_sites')->insert([
+                        'news_post_id' => $newsPostId,
+                        'wp_post_id' => $wpPostId,
+                        'site_name' => $site['name'],
+                        'post_title' => $title,
+                        'post_date' => $postDate,
+                        'post_link' => $postLink,
+                        'post_status' => $postStatus,
+                        'is_active' => 1,
+                        'created_at' => now(),
+                        'updated_at' => now()
+                    ]);
+
+                    $siteInserted++;
+                }
+            }
+
+            if (count($posts) < 100) {
+                break;
+            }
+
+            usleep(200000); // optional small delay
+            $page++;
+        }
+
+        // Mark posts inactive if not found anymore
+        if (!empty($seenWpIds)) {
+            $deactivated = DB::table('news_post_sites')
+                ->where('site_name', $site['name'])
+                ->whereNotIn('wp_post_id', $seenWpIds)
+                ->where('is_active', 1)
+                ->update([
+                    'is_active' => 0,
+                    'updated_at' => now()
+                ]);
+
+            $siteDeactivated = $deactivated;
+        }
+
+        return [
+            'site' => $site['name'],
+            'fetched' => $siteFetched,
+            'inserted' => $siteInserted,
+            'updated' => $siteUpdated,
+            'deactivated' => $siteDeactivated,
+            'errors' => $errors
+        ];
+    }
+}

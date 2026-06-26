@@ -1,0 +1,279 @@
+<?php
+
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Pagination\LengthAwarePaginator;
+
+class AuthController extends Controller
+{
+
+
+    public function showLogin()
+    {
+        return view('login');
+    }
+
+
+    public function login(Request $request)
+    {
+        $credentials = $request->only('email', 'password');
+
+        if (Auth::attempt($credentials)) {
+            return redirect('/dashboard');
+        }
+
+        return back()->with('error', 'Invalid Email or Password');
+    }
+
+    public function dashboard()
+    {
+        if (!Auth::check()) {
+            return redirect('/login');
+        }
+
+        // return view('layout');
+        return view('dashboard');
+    }
+
+    public function logout()
+    {
+        Auth::logout();
+        return redirect('/login');
+    }
+
+
+
+    public function showAddUser(){
+        if(!Auth::check()){
+            return redirect('/login');
+        }
+        return view('add-user');
+    }
+
+    public function storeUser(Request $request){
+        if(!Auth::check()){
+            return redirect('/login');
+        }
+
+        $request->validate([
+            'name' => 'required',
+            'email' => 'required | email | unique:users',
+            'password' => 'required | min:2'
+        ]);
+
+        User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password)
+        ]);
+
+        return redirect('/dashboard')->with('success', 'User Added Successfully');
+    }
+
+
+    // public function allPosts(){
+    public function newsDashboard(){
+
+        if(!Auth::check()){
+            return redirect('/login');
+        }
+
+        $sites = [
+            [
+                'key' => '1',
+                'name' => 'isstories.com',
+                'url' => 'https://www.isstories.com/'
+            ],
+
+            [
+                'key' => '2',
+                'name' => 'pronewsreport.com',
+                'url' => 'https://pronewsreport.com/'
+            ],
+
+        ];
+
+        $allPosts = [];
+
+       foreach($sites as $site){
+
+       $page = 1;
+
+
+       do{
+            $apiData = $site['url'] .'/wp-json/wp/v2/posts?per_page=100&page='.$page;
+
+            $responseData = @file_get_contents($apiData);
+
+            if(!$responseData) break;
+
+            $posts = json_decode($responseData);
+
+            if (!$posts) break;
+        
+
+            foreach ($posts as $post) {
+                $title = trim(strip_tags($post->title->rendered));
+
+                
+            if (!isset($allPosts[$title])) {
+                $allPosts[$title] = [
+                    'title' => $title,
+                    'sites' => []
+                ];
+            }
+            
+
+              $allPosts[$title]['sites'][] = [
+                'site_name' => $site['name'],
+                'link' => $post->link
+            ];
+            
+        }
+
+            $page++;
+         } while (count($posts) > 0);
+    }
+
+       /////////////////
+    //    foreach ($sites as $site) {
+
+    //     $page = 1;
+
+        // do {
+
+            // $api = $site['url']."/wp-json/wp/v2/posts?per_page=100&page=".$page;
+
+            // $response = @file_get_contents($api);
+
+            // if (!$response) break;
+
+            // $posts = json_decode($response);
+
+            // if (!$posts) break;
+
+            // foreach ($posts as $post) {
+
+                // $title = trim(strip_tags($post->title->rendered));
+
+                // if (!isset($allPosts[$title])) {
+
+                //     $allPosts[$title] = [
+                //         'title' => $title,
+                //         'sites' => []
+                //     ];
+                // }
+
+                // $allPosts[$title]['sites'][] = [
+                //     'site_name' => $site['name'],
+                //     'link' => $post->link
+                // ];
+           // }
+
+    //         $page++;
+
+    //     } while (count($posts) > 0);
+
+    // }
+
+    ////////////////
+       
+    //    $apiUrl = $site['url'] .'/wp-json/wp/v2/posts';
+       
+
+        // $posts = json_decode(@file_get_contents($apiUrl));
+
+        // echo '<pre>';
+        // print_r($apiUrl);
+        // print_r(json_decode($data));
+        // die();
+
+        // if (!$posts) continue;
+
+
+            
+            // if (!isset($allPosts[$title])) {
+            //     $allPosts[$title] = [
+            //         'title' => $title,
+            //         'sites' => []
+            //     ];
+            // }
+
+        //     $allPosts[$title]['sites'][] = [
+        //         'site_name' => $site['name'],
+        //         'link' => $post->link
+        //     ];
+        // }
+
+    //     echo '<pre>';
+    //    print_r($allPosts);
+    // foreach ($posts as $post) {
+    //         $title = trim(strip_tags($post->title->rendered));
+
+    //         if (!isset($allPosts[$title])) {
+    //             $allPosts[$title] = [
+    //                 'title' => $title,
+    //                 'sites' => []
+    //             ];
+    //         }
+
+    //         $allPosts[$title]['sites'][] = [
+    //             'site_name' => $site['name'],
+    //             'link' => $post->link
+    //         ];
+    //     }
+    //    die();
+        // return view(
+        //     'all-posts', compact('allPosts')
+        // );
+    //     return view(
+    //         'news-dashboard', compact('allPosts')
+    //     );
+
+    // }
+
+        $posts = collect($allPosts)->values();
+
+        $page = request()->get('page', 1);
+        $perPage = 10;
+
+        $paginatedPosts = new LengthAwarepaginator(
+            
+                    $posts->forpage($page, $perPage),
+                    $posts->count(),
+                    $perPage,
+                    $page,
+                    [
+                        'path' => request()->url(),
+                        'query' => request()->query()
+                    ]
+        );
+
+        
+    
+
+    // return view('news-dashboard', ['posts' => $allPosts]);
+    return view('news-dashboard', [
+        'posts' => $paginatedPosts,
+        'sites' => $sites
+        ]);
+}
+
+
+
+
+
+}
+
+    
+
+
+
+
+
+

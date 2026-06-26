@@ -1,0 +1,72 @@
+@extends('layout')
+
+@section('content')
+
+<div class="compact-container">
+
+    <h5 class="mb-3">News Dashboard</h5>
+    <!-- @if (session()->has('success'))
+    <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 3000)" x-show="show" class="alert alert-success">
+        {{ session('success') }}
+    </div>
+    @endif -->
+
+    @foreach($posts as $post)
+
+        <div class="card news-card mb-2">
+            <div class="card-body p-2">
+
+                <div class="news-title">
+                    {{ $post->title }}
+                </div>
+                
+
+                <div style="font-size:11px; color:gray; margin-bottom:5px;">
+                    {{ $post->formatted_date }}
+                </div>
+
+                <div>
+                    @foreach($post->sites as $site)
+
+                        <a href="{{ $site->post_link }}"
+                           target="_blank"
+                           class="btn btn-sm btn-primary site-btn">
+                            {{ $site->site_name }}
+                        </a>
+
+                    @endforeach
+                </div>
+
+            </div>
+        </div>
+
+    @endforeach
+
+    <div class="d-flex custom-pagination">
+        {{ $posts->links('pagination::bootstrap-5') }}
+    </div>
+
+</div>
+
+<style>
+.compact-container{
+    font-size:12px;
+}
+.news-title{
+    font-size:13px;
+    font-weight:600;
+    margin-bottom:2px;
+}
+.news-card{
+    padding:4px 8px;
+    border-radius:8px;
+}
+.site-btn{
+    font-size:10px;
+    padding:2px 7px;
+    margin-right:4px;
+    margin-top:3px;
+}
+</style>
+
+@endsection
