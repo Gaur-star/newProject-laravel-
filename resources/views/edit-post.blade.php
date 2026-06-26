@@ -13,25 +13,30 @@
 </div> --}}
 
     <div class="form-container">
-        <h2>Edit Post</h2>
-        @foreach
-        <form action="{{ route('post.update', $post->news_post_id) }}" method="POST" enctype="multipart/form-data">
+        <h2>Edit Post</h2>        
+            @if (session('status'))
+                <div class="alert alert-success">
+                    {{ session('status') }}
+                </div>
+            @endif
+        <form action="{{ route('post.update', $post->id) }}" method="POST" enctype="multipart/form-data">
             @csrf
-            <input type="hidden" name="post_id" value="12345">
+
+            <input type="hidden" name="post_id" value="{{ $post->id }}">
 
             <div class="form-group">
                 <label for="post-title">Post Title</label>
-                <input type="text" id="post-title" name="title" value="" required>
+                <input type="text" id="post-title" name="title" value="{{ $post->post_title }}" required>
             </div>
 
-            <div class="form-group">
+            {{-- <div class="form-group">
                 <label for="post-category">Category</label>
                 <select id="post-category" name="category">
                     <option value="web-development" selected>Web Development</option>
                     <option value="design">Design</option>
                     <option value="lifestyle">Lifestyle</option>
                 </select>
-            </div>
+            </div> --}}
 
             {{-- <div class="form-group">
                 <label for="post-image">Update Featured Image</label>
@@ -41,16 +46,16 @@
 
             <div class="form-group">
                 <label for="post-content">Content</label>
-                <textarea id="post-content" name="content" rows="12" required>Text Here ...</textarea>
+                <textarea id="post-content" name="content" rows="12" required>{{ $post->post_content }}</textarea>
             </div>
 
             <div class="button-group">
-                <button type="submit" class="btn btn-save">Save Changes</button>
+                <button type="submit" class="btn btn-save">Update Post</button>
                 <a href="/dashboard" class="btn btn-cancel">Cancel</a>
             </div>
 
         </form>
-        @endforeach
+       
     </div>
 
 

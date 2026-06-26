@@ -722,6 +722,24 @@ class AuthController extends Controller
         return view('edit-post', compact('post'));
     }
 
+    public function updatePost(Request $request, $id){
+        $request->validate([
+            'title' => 'required|max:255',
+            'content' => 'required',
+        ]);
+        $post = NewsPostSites::where('news_post_id', $id)->firstOrFail();
+        $post->update([
+            'post_title' => $request->title,
+            'post_content' => $request->content,
+        ]);
+
+        return redirect()
+                ->route('post.edit', $id )
+                ->with('status', 'Post updated');
+    }
+
+   
+
 
 
 }

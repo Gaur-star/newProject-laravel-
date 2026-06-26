@@ -39,6 +39,7 @@ Route::get('/sync-site/{siteName}', [AuthController::class, 'syncOneSite'])->nam
 Route::get('/users', [AuthController::class, 'userList'])->name('users.list');
 
 Route::get('/post/{post}/edit', [AuthController::class, 'editPost'])->name('post.edit');
+Route::post('/post/{post}/update', [AuthController::class, 'updatePost'])->name('post.update');
 
 Route::get('/clear-cache', function(){
     // Cache::flush();
