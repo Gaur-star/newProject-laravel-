@@ -201,9 +201,9 @@ class AuthController extends Controller
     }
 
 
-    echo "<pre>";
-    print_r($posts);
-    die();
+    // echo "<pre>";
+    // print_r($posts);
+    // die();
         return view('news-dashboard', compact(
             'posts',
             'siteList',
@@ -724,15 +724,17 @@ class AuthController extends Controller
     }
 
     public function updatePost(Request $request, $id){
+       
         $request->validate([
             'title' => 'required|max:255',
             'content' => 'required',
         ]);
+        dd($id);
         $post = NewsPostSites::where('news_post_id', $id)->firstOrFail();
         $post->update([
             'post_title' => $request->title,
             'post_content' => $request->content,
-            'sync_status' => 'pending',
+            
         ]);
 
         return redirect()
