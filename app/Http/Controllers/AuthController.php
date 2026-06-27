@@ -201,9 +201,9 @@ class AuthController extends Controller
     }
 
 
-    // echo "<pre>";
-    // print_r($posts);
-    // die();
+    echo "<pre>";
+    print_r($posts);
+    die();
         return view('news-dashboard', compact(
             'posts',
             'siteList',
@@ -676,7 +676,8 @@ class AuthController extends Controller
                         'post_status' => $postStatus,
                         'is_active' => 1,
                         'created_at' => now()->format('Y-m-d'),
-                        'updated_at' => now()->format('Y-m-d')
+                        'updated_at' => now()->format('Y-m-d'),
+                        'sync_status' => 'success',
                     ]);
 
                     $siteInserted++;
@@ -731,11 +732,44 @@ class AuthController extends Controller
         $post->update([
             'post_title' => $request->title,
             'post_content' => $request->content,
+            'sync_status' => 'pending',
         ]);
 
         return redirect()
                 ->route('post.edit', $id )
                 ->with('status', 'Post updated');
+    }
+
+
+    public function UpdateMainSitePost(){
+
+
+        $posts = NewsPostSites::where('sync_status', 'pending')
+             ->with('website')
+             ->get()
+             ->groupBy('website_id');
+
+            foreach ($posts as $websiteId => $websitePosts) {
+
+                $website = $websitePosts->first()->website;
+
+                foreach ($websitePosts as $post) {
+
+                    Http::withBasicAuth(
+                        $website->username,
+                        $website->app_password
+                    )->put(
+                        $website->wp_url . "/wp-json/wp/v2/posts/{$post->wp_id}",
+                        [
+                            'title' => $post->title,
+                            'content' => $post->content,
+                            'status' => 'publish'
+                        ]
+                    );
+                }
+            }
+
+            
     }
 
    
