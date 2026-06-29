@@ -729,11 +729,12 @@ class AuthController extends Controller
             'title' => 'required|max:255',
             'content' => 'required',
         ]);
-        dd($id);
+        // dd($id);
         $post = NewsPostSites::where('news_post_id', $id)->firstOrFail();
         $post->update([
             'post_title' => $request->title,
             'post_content' => $request->content,
+            'sync_status' => 'pending',
             
         ]);
 
@@ -747,29 +748,33 @@ class AuthController extends Controller
 
 
         $posts = NewsPostSites::where('sync_status', 'pending')
-             ->with('website')
-             ->get()
-             ->groupBy('website_id');
+                                // ->with('website')
+                                ->get();
+                                //  ->groupBy('website_id');
 
-            foreach ($posts as $websiteId => $websitePosts) {
+            // dd($posts);
 
-                $website = $websitePosts->first()->website;
+            // foreach ($posts as $websiteId => $websitePosts) {
 
-                foreach ($websitePosts as $post) {
+                // $website = $websitePosts->first()->website;
 
-                    Http::withBasicAuth(
-                        $website->username,
-                        $website->app_password
+                foreach ($posts as $post) {
+// dd($post->post_content);
+                    $response = Http::withBasicAuth(
+                        'App-admin',
+                        '*px)nJjr&!Oj7FJ5bczhX(IJ'
                     )->put(
-                        $website->wp_url . "/wp-json/wp/v2/posts/{$post->wp_id}",
+                        'https://pronewsreport.com' . "/wp-json/wp/v2/posts/{$post->wp_post_id}",
                         [
-                            'title' => $post->title,
-                            'content' => $post->content,
-                            'status' => 'publish'
+                            'title' => $post->post_title,
+                            'content' => $post->post_content,
+                            'status' => 'pending'
                         ]
                     );
                 }
-            }
+            // }
+
+    // dd($response->json());
 
             
     }

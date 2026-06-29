@@ -124,7 +124,7 @@
         <a href="/newsList"><span class="menu-text">NewsList</span></a>
         <a href="/add-user"><span class="menu-text">Add User</span></a>
         <a href="/users"><span class="menu-text">User List</span></a>
-        <!-- <a href="/sync-news"><span class="menu-text">newNews</span></a>     -->
+        <a href="/UpdateMainSitePost"><span class="menu-text">UpdateMainSitePost</span></a>
         <a href="/logout"><span class="menu-text">Logout</span></a>
 
     </div>

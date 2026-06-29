@@ -19,10 +19,10 @@
                     {{ session('status') }}
                 </div>
             @endif
-        <form action="{{ route('post.update', $post->id) }}" method="POST" enctype="multipart/form-data">
+        <form action="{{ route('post.update', $post->news_post_id) }}" method="POST" enctype="multipart/form-data">
             @csrf
 
-            <input type="hidden" name="post_id" value="{{ $post->id }}">
+            <input type="hidden" name="post_id" value="{{ $post->news_post_id }}">
 
             <div class="form-group">
                 <label for="post-title">Post Title</label>

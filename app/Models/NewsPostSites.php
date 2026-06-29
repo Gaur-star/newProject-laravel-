@@ -7,10 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class NewsPostSites extends Model
 {
-    // Explicitly define the hyphenated table name
     protected $table = 'news_post_sites';
 
-    // Allow mass assignment for your column names
     protected $fillable = [
         'news_post_id',
         'wp_post_id',
@@ -22,6 +20,7 @@ class NewsPostSites extends Model
         'is_active',
         'site_name',
         'post_link',
+        'sync_status'
 
     ];
 }
