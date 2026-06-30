@@ -723,12 +723,6 @@ class AuthController extends Controller
         return view('edit-post', compact('post'));
     }
 
-    public function updateSitePosts(){
-        $sites = ListOfSites::all();
-        return view('updatePage', compact('sites'));
-
-    }
-
     public function updatePost(Request $request, $id){
        
         $request->validate([
@@ -747,6 +741,12 @@ class AuthController extends Controller
         return redirect()
                 ->route('post.edit', $id )
                 ->with('status', 'Post updated');
+    }
+
+    public function updateSitePosts(){
+        $sites = ListOfSites::all();
+        return view('updatePage', compact('sites'));
+
     }
 
 

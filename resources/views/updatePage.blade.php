@@ -13,7 +13,7 @@
             </div>
             <div class="action-area">
                 <span class="status-message">✓ Success</span>
-                <button class="update-btn" onclick="updateSite(1, this)">Update</button>
+                <button class="update-btn" onclick="updateSite( {{ $site->id }}, this)">Update</button>
             </div>
         </div>
         @endforeach       
