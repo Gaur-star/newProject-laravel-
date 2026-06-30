@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\NewsPostSites;
+use App\Models\ListOfSites;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -251,7 +252,7 @@ class AuthController extends Controller
                 }
 
                 $site = [
-                    'name' => $spindigit,
+                    'name' => 'spindigit',
                     'url' => $sites[$siteName]
                 ];
 
@@ -459,7 +460,7 @@ class AuthController extends Controller
                 }
 
                 $site = [
-                    'name' => $spindigit,
+                    'name' => 'spindigit',
                     'url' => $sites[$siteName]
                 ];
 
@@ -744,9 +745,10 @@ class AuthController extends Controller
     }
 
 
-    public function UpdateMainSitePost(){
+    public function UpdateMainSitePost($siteid){
 
 
+            $site = ListOfSites :: where('id', '{$siteid}')->get();
         // $posts = NewsPostSites::where('sync_status', 'pending')
                                 // ->with('website')
                                 // ->get();
@@ -760,18 +762,18 @@ class AuthController extends Controller
 
                 // foreach ($posts as $post) {
 
-                    $response = Http::withBasicAuth('App-admin', 'fLPc JQ3O cVpv k7cY er4W TrBP' )
-                                                ->put('https://pronewsreport.com' . "/wp-json/wp/v2/posts/42651",
+                    $response = Http::withBasicAuth('{$user}', '{$password}' )
+                                                ->put('{$site}' . '/wp-json/wp/v2/posts/{$id}',
                         [
-                            'title' => 'ASIAN DRAGON Enclosed',
-                            // 'content' => $post->post_content,
+                            'title' => '{$title}',
+                            'content' => '{$content}',
                             'status' => 'pending'
                         ]);
                     
            
 
                         if($response->successful()){
-                            echo "updated";
+                            echo "Update Successfull";
 
                         }else{
                             dd($response->json());

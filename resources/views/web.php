@@ -2,7 +2,11 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+
 use App\Models\User;
+use App\Models\ListOfSites;
+use App\Models\NewsPostSites;
+
 use Illuminate\Support\Facades\Hash;
 
 
@@ -41,8 +45,8 @@ Route::get('/sync-news', [AuthController::class, 'syncNews'])->name('sync.news')
 Route::get('/users', [AuthController::class, 'userList'])->name('users.list');
 
 Route::get('/clear-cache', function(){
-    Cache::flush();
-    return "Cache Cleared";
+    // Cache::flush();
+    // return "Cache Cleared";
 });
 
 
