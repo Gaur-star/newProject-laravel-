@@ -747,9 +747,9 @@ class AuthController extends Controller
     public function UpdateMainSitePost(){
 
 
-        $posts = NewsPostSites::where('sync_status', 'pending')
+        // $posts = NewsPostSites::where('sync_status', 'pending')
                                 // ->with('website')
-                                ->get();
+                                // ->get();
                                 //  ->groupBy('website_id');
 
             // dd($posts);
@@ -758,25 +758,26 @@ class AuthController extends Controller
 
                 // $website = $websitePosts->first()->website;
 
-                foreach ($posts as $post) {
-// dd($post->post_content);
-                    $response = Http::withBasicAuth(
-                        'App-admin',
-                        '*px)nJjr&!Oj7FJ5bczhX(IJ'
-                    )->put(
-                        'https://pronewsreport.com' . "/wp-json/wp/v2/posts/{$post->wp_post_id}",
+                // foreach ($posts as $post) {
+
+                    $response = Http::withBasicAuth('App-admin', 'fLPc JQ3O cVpv k7cY er4W TrBP' )
+                                                ->put('https://pronewsreport.com' . "/wp-json/wp/v2/posts/42651",
                         [
-                            'title' => $post->post_title,
-                            'content' => $post->post_content,
+                            'title' => 'ASIAN DRAGON Enclosed',
+                            // 'content' => $post->post_content,
                             'status' => 'pending'
-                        ]
-                    );
-                }
-            // }
+                        ]);
+                    
+           
 
-    // dd($response->json());
+                        if($response->successful()){
+                            echo "updated";
 
-            
+                        }else{
+                            dd($response->json());
+                        }
+
+                                                
     }
 
    
