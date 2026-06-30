@@ -14,5 +14,6 @@ class ListOfSites extends Model
             'site_pass',			
             'site_App_pass',		
             'site_status',
+            'site_url'
     ];
 }

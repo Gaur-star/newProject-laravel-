@@ -2,44 +2,21 @@
 
 @section('content')
     
-    <h1>Monitored Sites</h1>
+    <h1>Wordpress Site Update</h1>
 
     <div class="site-list">
-        <!-- Site 1 -->
+       @foreach($sites as $site)
         <div class="site-item" data-site-id="1">
             <div class="site-info">
-                <span class="site-name">Production App</span>
-                <span class="site-url">https://example.com</span>
+                <span class="site-name">{{ $site->site_name }}</span>
+                <span class="site-url">{{ $site->site_url }}</span>
             </div>
             <div class="action-area">
                 <span class="status-message">✓ Success</span>
                 <button class="update-btn" onclick="updateSite(1, this)">Update</button>
             </div>
         </div>
-
-        <!-- Site 2 -->
-        <div class="site-item" data-site-id="2">
-            <div class="site-info">
-                <span class="site-name">Staging Environment</span>
-                <span class="site-url">https://example.com</span>
-            </div>
-            <div class="action-area">
-                <span class="status-message">✓ Success</span>
-                <button class="update-btn" onclick="updateSite(2, this)">Update</button>
-            </div>
-        </div>
-
-        <!-- Site 3 -->
-        <div class="site-item" data-site-id="3">
-            <div class="site-info">
-                <span class="site-name">Documentation Wiki</span>
-                <span class="site-url">https://example.com</span>
-            </div>
-            <div class="action-area">
-                <span class="status-message">✓ Success</span>
-                <button class="update-btn" onclick="updateSite(3, this)">Update</button>
-            </div>
-        </div>
+        @endforeach       
     </div>
 
 
@@ -60,9 +37,9 @@
             font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background-color: var(--bg-color);
             color: var(--text-main);
-            max-width: 600px;
-            margin: 2rem auto;
-            padding: 0 1rem;
+            /* max-width: 600px; */
+            /* margin: 2rem auto; */
+            /* padding: 0 1rem; */
         }
 
         h1 {

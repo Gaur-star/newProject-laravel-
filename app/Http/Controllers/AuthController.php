@@ -720,8 +720,13 @@ class AuthController extends Controller
         // dd($id);
         // return view('edit-post');
         $post = NewsPostSites::where('news_post_id', $id)->firstOrFail();
-        // dd($post);
         return view('edit-post', compact('post'));
+    }
+
+    public function updateSitePosts(){
+        $sites = ListOfSites::all();
+        return view('updatePage', compact('sites'));
+
     }
 
     public function updatePost(Request $request, $id){
@@ -748,7 +753,7 @@ class AuthController extends Controller
     public function UpdateMainSitePost($siteid){
 
 
-            $site = ListOfSites :: where('id', '{$siteid}')->get();
+            $site = ListOfSites::where('id', '{$siteid}')->get();
         // $posts = NewsPostSites::where('sync_status', 'pending')
                                 // ->with('website')
                                 // ->get();
