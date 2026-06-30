@@ -2,14 +2,22 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+
 use App\Models\User;
+use App\Models\ListOfSites;
+use App\Models\NewsPostSites;
+
 use Illuminate\Support\Facades\Hash;
 
 
 
 
 Route::get('/', function () {
-    return redirect('login');
+    return view('welcome');
+});
+
+Route::get('/', function () {
+    return redirect('/login');
 });
 
 // Route::get('/hash', function(){
