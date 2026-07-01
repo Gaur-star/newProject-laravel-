@@ -147,6 +147,41 @@
 
             }, 1500);
         }
+
+
+        function updateSite(siteId, buttonElement, onSuccess, onFailure) {
+            const actionArea = buttonElement.parentElement;
+            const successMessage = actionArea.querySelector('.status-message');
+
+            buttonElement.disabled = true;
+            buttonElement.innerText = 'Updating...';
+            successMessage.style.display = 'none';
+
+            setTimeout(() => {
+                const success = true; // Change to false to test failure
+
+                buttonElement.disabled = false;
+                buttonElement.innerText = 'Update';
+
+                if (success) {
+                    successMessage.style.display = 'inline';
+
+                    setTimeout(() => {
+                        successMessage.style.display = 'none';
+                    }, 3000);
+
+                    if (typeof onSuccess === 'function') {
+                        onSuccess();
+                    }
+                } else {
+                    if (typeof onFailure === 'function') {
+                        onFailure('Update failed');
+                    }
+                }
+            }, 1500);
+        }
+
+        
     </script>
 
 

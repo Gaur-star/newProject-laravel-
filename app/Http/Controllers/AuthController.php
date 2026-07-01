@@ -737,10 +737,16 @@ class AuthController extends Controller
             'sync_status' => 'pending',
             
         ]);
+        
+        $result = $this->UpdateMainSitePost($id);
 
-        return redirect()
-                ->route('post.edit', $id )
-                ->with('status', 'Post updated');
+        // if($result == 'Successfull'){
+
+        //         return redirect()
+        //         ->route('post.edit', $id )
+        //         ->with('status', 'Post updated');
+        //         }
+                   
     }
 
     public function sitedetail(){
@@ -754,15 +760,18 @@ class AuthController extends Controller
     }
 
 
-    public function UpdateMainSitePost($siteid){
+    public function UpdateMainSitePost($id){
 
 
-            $site = ListOfSites::where('id', '{$siteid}')->get();
-        // $posts = NewsPostSites::where('sync_status', 'pending')
+            $site = ListOfSites::where('id', '{$id}')->get();
+            // $posts = NewsPostSites::where('sync_status', 'pending')
                                 // ->with('website')
                                 // ->get();
                                 //  ->groupBy('website_id');
-
+            $user = "";
+            $Apassword = "";
+            $site = "";
+            $id = "";
             // dd($posts);
 
             // foreach ($posts as $websiteId => $websitePosts) {
@@ -782,7 +791,7 @@ class AuthController extends Controller
            
 
                         if($response->successful()){
-                            echo "Update Successfull";
+                            echo "Successfull";
 
                         }else{
                             dd($response->json());
