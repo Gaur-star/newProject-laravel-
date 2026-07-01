@@ -743,6 +743,10 @@ class AuthController extends Controller
                 ->with('status', 'Post updated');
     }
 
+    public function sitedetail(){
+        return view('siteDetails');
+    }
+
     public function updateSitePosts(){
         $sites = ListOfSites::all();
         return view('updatePage', compact('sites'));

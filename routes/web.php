@@ -52,6 +52,8 @@ Route::post('/post/{post}/update', [AuthController::class, 'updatePost'])->name(
 Route::get('/UpdateSites', [AuthController::class, 'updateSitePosts']);
 // Route::get('/UpdateMainSitePost', [AuthController::class, 'UpdateMainSitePost']);
 
+Route::get('/sitedetails', [AuthController::class, 'sitedetail']);
+
 Route::get('/clear-cache', function(){
     // Cache::flush();
     // return "Cache Cleared";
