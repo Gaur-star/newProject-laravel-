@@ -447,31 +447,33 @@ class AuthController extends Controller
                 'worldfrontnews' => 'https://worldfrontnews.com/'
             ];
 
-        
-            if (!empty($siteName)) {
+    //    ====================will check======================= 
+            // if (!empty($siteName)) {
 
-                if (!isset($sites[$siteName])) {
-                    return response()->json([
-                        'status' => 'error',
-                        'message' => 'Invalid site'
-                    ], 400);
-                }
+            //     if (!isset($sites[$siteName])) {
+            //         return response()->json([
+            //             'status' => 'error',
+            //             'message' => 'Invalid site'
+            //         ], 400);
+            //     }
 
-                $site = [
-                    'name' => 'spindigit',
-                    'url' => $sites[$siteName]
-                ];               
+            //     $site = [
+            //         'name' => 'spindigit',
+            //         'url' => $sites[$siteName]
+            //     ];               
 
-                $result = $this->syncSingleSite($site);
+            //     $result = $this->syncSingleSite($site);
 
-                Cache::flush();
+            //     Cache::flush();
 
-                return response()->json([
-                    'status' => 'success',
-                    'message' => $siteName . ' sync completed',
-                    'result' => $result
-                ]);
-            }
+            //     return response()->json([
+            //         'status' => 'success',
+            //         'message' => $siteName . ' sync completed',
+            //         'result' => $result
+            //     ]);
+            // }
+
+    //    ====================will check after======================= 
 
         $summary = [];
         $totalFetched = 0;
@@ -501,20 +503,16 @@ class AuthController extends Controller
         return response()->json([
             'status' => 'success',
             'message' => 'News sync completed',
-            'total_fetched' => $totalFetched,
-            'total_inserted' => $totalInserted,
-            'total_updated' => $totalUpdated,
-            'site_summary' => $summary
+            // 'total_fetched' => $totalFetched,
+            // 'total_inserted' => $totalInserted,
+            // 'total_updated' => $totalUpdated,
+            // 'site_summary' => $summary
         ]);
     }
 
 
     private function syncSingleSite($site)
     {
-
-        // echo "<pre>";
-        // print_r($site);
-        // die();
 
         $siteFetched = 0;
         $siteInserted = 0;
