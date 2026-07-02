@@ -282,35 +282,35 @@ class AuthController extends Controller
 
         //     while (true) {
 
-            //             $api = $site['url'] . "/wp-json/wp/v2/posts?per_page=20&page=" . $page . "&orderby=date&order=desc&_fields=id,date,link,title";
-            // // dd($api);
+        //             $api = $site['url'] . "/wp-json/wp/v2/posts?per_page=20&page=" . $page . "&orderby=date&order=desc&_fields=id,date,link,title";
+        // // dd($api);
 
-            //             $response = Http::timeout(60) 
-                                    // ->withOptions([
-                                    //         'verify' => true, 
-                                    //         'allow_redirects' => true, 
-                                    //     ])
-                                    // ->get($api);
-
-
-            // $body = $response->body();
-            // dd($response);
-
-            // $httpCode = $response->status();
+        //             $response = Http::timeout(60) 
+                                // ->withOptions([
+                                //         'verify' => true, 
+                                //         'allow_redirects' => true, 
+                                //     ])
+                                // ->get($api);
 
 
-            // if ($response->failed()) {
+        // $body = $response->body();
+        // dd($response);
 
-                // $error = $response->toException();
+        // $httpCode = $response->status();
 
-            // }
 
-            // $data = $response->json();
-                        /////////////////////////////////////
+        // if ($response->failed()) {
 
-                        // if ($httpCode == 400 || $httpCode == 404) {
-                        //     break;
-                        // }
+        // $error = $response->toException();
+
+        // }
+
+        // $data = $response->json();
+                    /////////////////////////////////////
+
+                    // if ($httpCode == 400 || $httpCode == 404) {
+                    //     break;
+                    // }
 
             
         // $response = Http::get($site['url'] . '?page=' . $page);
@@ -325,89 +325,89 @@ class AuthController extends Controller
         // }
 
         //             $posts = json_decode($response, true);
-                    // dd($posts);
-                    // if (!is_array($posts) || count($posts) == 0) {
-                    //     break;
-                    // }
+        // dd($posts);
+        // if (!is_array($posts) || count($posts) == 0) {
+        //     break;
+        // }
 
-                    // foreach ($posts as $post) {
+        // foreach ($posts as $post) {
 
-                    //     $siteFetched++;
-                    //     $totalFetched++;
+        //     $siteFetched++;
+        //     $totalFetched++;
 
-                    //     $title = trim(strip_tags($post['title']['rendered'] ?? ''));
+        //     $title = trim(strip_tags($post['title']['rendered'] ?? ''));
 
-                    // if ($title == '') {
-                    //     continue;
-                    // }
+        // if ($title == '') {
+        //     continue;
+        // }
 
-                    // $key = md5(strtolower($title));
+        // $key = md5(strtolower($title));
 
-                    // $existingPost = DB::table('news_posts')->where('unique_key', $key)->first();
+        // $existingPost = DB::table('news_posts')->where('unique_key', $key)->first();
 
-                    // if (!$existingPost) {
-                    //     $newsPostId = DB::table('news_posts')->insertGetId([
-                    //         'title' => $title,
-                    //         'unique_key' => $key,
-                    //         'post_date' => $post['date'] ?? null,
-                    //         'created_at' => now(),
-                    //         'updated_at' => now()
-                    //     ]);
-                    //     $siteInserted++;
-                    //     $totalInserted++;
-                    // } else {
-                    //     $newsPostId = $existingPost->id;
+        // if (!$existingPost) {
+        //     $newsPostId = DB::table('news_posts')->insertGetId([
+        //         'title' => $title,
+        //         'unique_key' => $key,
+        //         'post_date' => $post['date'] ?? null,
+        //         'created_at' => now(),
+        //         'updated_at' => now()
+        //     ]);
+        //     $siteInserted++;
+        //     $totalInserted++;
+        // } else {
+        //     $newsPostId = $existingPost->id;
 
-                    // DB::table('news_posts')
-                    //     ->where('id', $newsPostId)
-                    //     ->update([
-                    //         'title' => $title,
-                    //         'post_date' => $post['date'] ?? $existingPost->post_date,
-                    //         'updated_at' => now()
-                    //     ]);
-                    //     $siteUpdated++;
-                    //     $totalUpdated++;
-                    // }
+        // DB::table('news_posts')
+        //     ->where('id', $newsPostId)
+        //     ->update([
+        //         'title' => $title,
+        //         'post_date' => $post['date'] ?? $existingPost->post_date,
+        //         'updated_at' => now()
+        //     ]);
+        //     $siteUpdated++;
+        //     $totalUpdated++;
+        // }
 
-                    // $existingSite = DB::table('news_post_sites')
-                    //     ->where('news_post_id', $newsPostId)
-                    //     ->where('site_name', $site['name'])
-                    //     ->first();
+        // $existingSite = DB::table('news_post_sites')
+        //     ->where('news_post_id', $newsPostId)
+        //     ->where('site_name', $site['name'])
+        //     ->first();
 
-                    // if (!$existingSite) {
-                    //         DB::table('news_post_sites')->insert([
-                    //             'news_post_id' => $newsPostId,
-                    //             'site_name' => $site['name'],
-                    //             'post_link' => $post['link'] ?? '#',
-                    //             'created_at' => now(),
-                    //             'updated_at' => now()
-                    //         ]);
-                    //     } else {
-                    //         DB::table('news_post_sites')
-                    //             ->where('id', $existingSite->id)
-                    //             ->update([
-                    //                 'site_name' => $site['name'],
-                    //                 'post_link' => $post['link'] ?? $existingSite->post_link,
-                    //                 'updated_at' => now()
-                    //             ]);
-                    //     }
-                    // }
+        // if (!$existingSite) {
+        //         DB::table('news_post_sites')->insert([
+        //             'news_post_id' => $newsPostId,
+        //             'site_name' => $site['name'],
+        //             'post_link' => $post['link'] ?? '#',
+        //             'created_at' => now(),
+        //             'updated_at' => now()
+        //         ]);
+        //     } else {
+        //         DB::table('news_post_sites')
+        //             ->where('id', $existingSite->id)
+        //             ->update([
+        //                 'site_name' => $site['name'],
+        //                 'post_link' => $post['link'] ?? $existingSite->post_link,
+        //                 'updated_at' => now()
+        //             ]);
+        //     }
+        // }
 
             
-                    //         if (count($posts) < 100) {
-                    //             break;
-                    //         }
+        //         if (count($posts) < 100) {
+        //             break;
+        //         }
 
-                    //         $page++;
-                    //     }
+        //         $page++;
+        //     }
 
-                    //     $summary[] = [
-                    //         'site' => $site['name'],
-                    //         'fetched' => $siteFetched,
-                    //         'inserted' => $siteInserted,
-                    //         'updated' => $siteUpdated
-                    //     ];
-                    // }
+        //     $summary[] = [
+        //         'site' => $site['name'],
+        //         'fetched' => $siteFetched,
+        //         'inserted' => $siteInserted,
+        //         'updated' => $siteUpdated
+        //     ];
+        // }
 
         foreach ($sites as $name => $url) {
         //    dd($sites); 
@@ -426,9 +426,6 @@ class AuthController extends Controller
             }
 
 
-
-
-
         Cache::flush();
 
         return response()->json([
@@ -445,8 +442,9 @@ class AuthController extends Controller
     public function syncNews($siteName = null)
     {
         $sites = [
-            //  'spindigit' => 'https://spindigit.com/',
-            'pronewsreport.com' => 'https://pronewsreport.com/'
+                //  'spindigit' => 'https://spindigit.com/',
+                // 'pronewsreport.com' => 'https://pronewsreport.com/'
+                'worldfrontnews' => 'https://worldfrontnews.com/'
             ];
 
         
@@ -462,9 +460,7 @@ class AuthController extends Controller
                 $site = [
                     'name' => 'spindigit',
                     'url' => $sites[$siteName]
-                ];
-
-               
+                ];               
 
                 $result = $this->syncSingleSite($site);
 
@@ -500,8 +496,6 @@ class AuthController extends Controller
 
         // dd($result);
 
-
-
         Cache::flush();
 
         return response()->json([
@@ -536,19 +530,15 @@ class AuthController extends Controller
 
             $api = $site['url'] . "/wp-json/wp/v2/posts?per_page=100&page=" . $page . "&orderby=date&order=desc&_fields=id, date, link, title, content, excerpt, status, featured_media";
 
-
             $response = Http::get($api);
             if ($response->successful()) {
                 $data = $response->json();
-            }
-
-            
+            }            
 
             $response = Http::timeout(60)
                 ->withoutVerifying()
                 ->get($api);
             $httpCode = $response->status();
-
 
             if ($httpCode == 400 || $httpCode == 404) {
                 break;
@@ -559,9 +549,7 @@ class AuthController extends Controller
                 break;
             }
 
-            $posts = $response->json();
-
-           
+            $posts = $response->json();           
 
             if (!is_array($posts) || count($posts) == 0) {
                 echo "1";
@@ -603,9 +591,7 @@ class AuthController extends Controller
 
                 $seenWpIds[] = $wpPostId;
 
-
                 $groupKey = md5(strtolower($title));
-
 
                 $existingSitePost = DB::table('news_post_sites')
                     ->where('site_name', $site['name'])
@@ -715,10 +701,8 @@ class AuthController extends Controller
             'errors' => $errors
         ];
     }
-/////////////////////////////////////////////////////////////////////
+
     public function editPost($id){
-        // dd($id);
-        // return view('edit-post');
         $post = NewsPostSites::where('news_post_id', $id)->firstOrFail();
         return view('edit-post', compact('post'));
     }
@@ -731,6 +715,8 @@ class AuthController extends Controller
         ]);
         // dd($id);
         $post = NewsPostSites::where('news_post_id', $id)->firstOrFail();
+
+        
         $post->update([
             'post_title' => $request->title,
             'post_content' => $request->content,
@@ -740,12 +726,18 @@ class AuthController extends Controller
         
         $result = $this->UpdateMainSitePost($id);
 
-        // if($result == 'Successfull'){
+        if($result->successful()){
+                echo "Successfull";
 
-        //         return redirect()
-        //         ->route('post.edit', $id )
-        //         ->with('status', 'Post updated');
-        //         }
+                }else{
+                    dd($result->json());
+             }
+
+
+        return redirect()
+        ->route('post.edit', $id )
+        ->with('status', 'Post updated');
+        
                    
     }
 
@@ -762,39 +754,25 @@ class AuthController extends Controller
 
     public function UpdateMainSitePost($id){
 
+            $posts = NewsPostSites::where('id', $id)
+                                    ->get();
+          
+            foreach($posts as $post){
+                        
+            $user = "editor";
+            $Apassword = "NXB2 bWAh 6GIf AzKG uvJW z1YP";
+            $Sitename = "https://worldfrontnews.com/";
+            $wp_id = $post->wp_post_id;
 
-            $site = ListOfSites::where('id', '{$id}')->get();
-            // $posts = NewsPostSites::where('sync_status', 'pending')
-                                // ->with('website')
-                                // ->get();
-                                //  ->groupBy('website_id');
-            $user = "";
-            $Apassword = "";
-            $site = "";
-            $id = "";
-            // dd($posts);
-
-            // foreach ($posts as $websiteId => $websitePosts) {
-
-                // $website = $websitePosts->first()->website;
-
-                // foreach ($posts as $post) {
-
-                    $response = Http::withBasicAuth('{$user}', '{$password}' )
-                                                ->put('{$site}' . '/wp-json/wp/v2/posts/{$id}',
+                    $response = Http::withBasicAuth( $user, $Apassword )
+                                                ->put( $Sitename . '/wp-json/wp/v2/posts/' . $wp_id,
                         [
-                            'title' => '{$title}',
-                            'content' => '{$content}',
+                            'title' => $post->post_title,
+                            'content' => $post->post_content,
                             'status' => 'pending'
                         ]);
-                    
-           
-
-                        if($response->successful()){
-                            echo "Successfull";
-
-                        }else{
-                            dd($response->json());
+                
+                        return $response;
                         }
 
                                                 

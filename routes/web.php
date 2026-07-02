@@ -49,10 +49,10 @@ Route::get('/users', [AuthController::class, 'userList'])->name('users.list');
 Route::get('/post/{post}/edit', [AuthController::class, 'editPost'])->name('post.edit');
 Route::post('/post/{post}/update', [AuthController::class, 'updatePost'])->name('post.update');
 
-Route::get('/UpdateSites', [AuthController::class, 'updateSitePosts']);
+// Route::get('/UpdateSites', [AuthController::class, 'updateSitePosts']);
 // Route::get('/UpdateMainSitePost', [AuthController::class, 'UpdateMainSitePost']);
 
-Route::get('/sitedetails', [AuthController::class, 'sitedetail']);
+Route::get('/UpdateSites', [AuthController::class, 'UpdateMainSitePost']);
 
 Route::get('/clear-cache', function(){
     // Cache::flush();
