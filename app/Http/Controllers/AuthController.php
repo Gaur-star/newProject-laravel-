@@ -713,8 +713,9 @@ class AuthController extends Controller
         ]);
         // dd($id);
         $post = NewsPostSites::where('news_post_id', $id)->firstOrFail();
-
-        
+        // dd($post);
+        $siteName = $post->site_name ;  //https://worldfrontnews.com/
+        // dd($siteName);
         $post->update([
             'post_title' => $request->title,
             'post_content' => $request->content,
@@ -722,7 +723,7 @@ class AuthController extends Controller
             
         ]);
         
-        $result = $this->UpdateMainSitePost($id);
+        $result = $this->UpdateMainSitePost($id, $siteName);
 
         if($result->successful()){
                 echo "Successfull";
@@ -750,7 +751,7 @@ class AuthController extends Controller
     }
 
 
-    public function UpdateMainSitePost($id){
+    public function UpdateMainSitePost($id, $siteName){
 
             $posts = NewsPostSites::where('id', $id)
                                     ->get();
@@ -758,8 +759,20 @@ class AuthController extends Controller
             foreach($posts as $post){
                         
             $user = "editor";
-            $Apassword = "NXB2 bWAh 6GIf AzKG uvJW z1YP";
-            $Sitename = "https://worldfrontnews.com/";
+            $Sitename = 'https:://' . $siteName . '.com';  //https://worldfrontnews.com/
+            
+            if( $siteName == 'worldfrontnews' ){                
+                $Apassword = "NXB2 bWAh 6GIf AzKG uvJW z1YP";
+            }
+            if( $siteName == 'switchingfashion' ){                
+                $Apassword = "Y9vj F227 ia1o Mckf ephQ uHln";
+            }
+            // if( $siteName == 'worldfrontnews' ){                
+            //     $Apassword = "NXB2 bWAh 6GIf AzKG uvJW z1YP";
+            // }
+
+            
+
             $wp_id = $post->wp_post_id;
 
                     $response = Http::withBasicAuth( $user, $Apassword )
