@@ -442,36 +442,35 @@ class AuthController extends Controller
     public function syncNews($siteName = null)
     {
         $sites = [
-                //  'spindigit' => 'https://spindigit.com/',
-                // 'pronewsreport.com' => 'https://pronewsreport.com/'
-                'worldfrontnews' => 'https://worldfrontnews.com/'
+                'worldfrontnews' => 'https://worldfrontnews.com/',
+                'switchingFashion' => 'https://switchingfashion.com/'
             ];
 
     //    ====================will check======================= 
-            // if (!empty($siteName)) {
+            if (!empty($siteName)) {
 
-            //     if (!isset($sites[$siteName])) {
-            //         return response()->json([
-            //             'status' => 'error',
-            //             'message' => 'Invalid site'
-            //         ], 400);
-            //     }
+                if (!isset($sites[$siteName])) {
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => 'Invalid site'
+                    ], 400);
+                }
 
-            //     $site = [
-            //         'name' => 'spindigit',
-            //         'url' => $sites[$siteName]
-            //     ];               
+                $site = [
+                    'name' => $sites[$siteName],
+                    'url' => $sites[$siteName]
+                ];               
 
-            //     $result = $this->syncSingleSite($site);
+                $result = $this->syncSingleSite($site);
 
-            //     Cache::flush();
+                Cache::flush();
 
-            //     return response()->json([
-            //         'status' => 'success',
-            //         'message' => $siteName . ' sync completed',
-            //         'result' => $result
-            //     ]);
-            // }
+                return response()->json([
+                    'status' => 'success',
+                    'message' => $siteName . ' sync completed',
+                    'result' => $result
+                ]);
+            }
 
     //    ====================will check after======================= 
 
