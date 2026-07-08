@@ -285,12 +285,12 @@ class AuthController extends Controller
         //             $api = $site['url'] . "/wp-json/wp/v2/posts?per_page=20&page=" . $page . "&orderby=date&order=desc&_fields=id,date,link,title";
         // // dd($api);
 
-        //             $response = Http::timeout(60) 
-                                // ->withOptions([
-                                //         'verify' => true, 
-                                //         'allow_redirects' => true, 
-                                //     ])
-                                // ->get($api);
+        //  $response = Http::timeout(60) 
+        // ->withOptions([
+        //         'verify' => true, 
+        //         'allow_redirects' => true, 
+        //     ])
+        // ->get($api);
 
 
         // $body = $response->body();
@@ -472,7 +472,7 @@ class AuthController extends Controller
                 ]);
             }
 
-    //    ====================will check after======================= 
+    // ====================will check after======================= 
 
         $summary = [];
         $totalFetched = 0;
@@ -760,12 +760,12 @@ class AuthController extends Controller
             $user = "editor";
             $Sitename = 'https:://' . $siteName . '.com';  //https://worldfrontnews.com/
             
-            if( $siteName == 'worldfrontnews' ){                
-                $Apassword = "NXB2 bWAh 6GIf AzKG uvJW z1YP";
-            }
-            if( $siteName == 'switchingfashion' ){                
-                $Apassword = "Y9vj F227 ia1o Mckf ephQ uHln";
-            }
+            // if( $siteName == 'worldfrontnews' ){                
+            //     $Apassword = "NXB2 bWAh 6GIf AzKG uvJW z1YP";
+            // }
+            // if( $siteName == 'switchingfashion' ){                
+            //     $Apassword = "Y9vj F227 ia1o Mckf ephQ uHln";
+            // }
             // if( $siteName == 'worldfrontnews' ){                
             //     $Apassword = "NXB2 bWAh 6GIf AzKG uvJW z1YP";
             // }
