@@ -442,8 +442,9 @@ class AuthController extends Controller
     public function syncNews($siteName = null)
     {
         $sites = [
-                'worldfrontnews' => 'https://worldfrontnews.com/',
-                'switchingFashion' => 'https://switchingfashion.com/'
+            'switchingFashion' => 'switchingfashion.com/',
+            'worldfrontnews' => 'worldfrontnews.com/',
+                
             ];
 
     //    ====================will check======================= 
@@ -479,9 +480,9 @@ class AuthController extends Controller
         $totalInserted = 0;
         $totalUpdated = 0;
       
-
+// dd($sites);
         foreach ($sites as $name => $url) {
-       
+     
                 $site = [
                     'name' => $name,
                     'url' => $url
@@ -512,7 +513,7 @@ class AuthController extends Controller
 
     private function syncSingleSite($site)
     {
-
+// dd($site);
         $siteFetched = 0;
         $siteInserted = 0;
         $siteUpdated = 0;
