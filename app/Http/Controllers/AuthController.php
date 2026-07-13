@@ -17,7 +17,6 @@ use Illuminate\Support\Facades\Http;
 class AuthController extends Controller
 {
 
-
     public function showLogin()
     {
         return view('login');
@@ -202,9 +201,6 @@ class AuthController extends Controller
     }
 
 
-    // echo "<pre>";
-    // print_r($posts);
-    // die();
         return view('news-dashboard', compact(
             'posts',
             'siteList',
@@ -217,9 +213,6 @@ class AuthController extends Controller
 
 
     }
-
-
-
 
 
     public function syncNews1($siteName = null)
@@ -282,7 +275,8 @@ class AuthController extends Controller
 
         //     while (true) {
 
-        //             $api = $site['url'] . "/wp-json/wp/v2/posts?per_page=20&page=" . $page . "&orderby=date&order=desc&_fields=id,date,link,title";
+        //             $api = $site['url'] . "/wp-json/wp/v2/posts?per_page=20&page=" . $page . 
+        //  "&orderby=date&order=desc&_fields=id,date,link,title";
         // // dd($api);
 
         //  $response = Http::timeout(60) 
@@ -442,12 +436,16 @@ class AuthController extends Controller
     public function syncNews($siteName = null)
     {
         $sites = [
-            'switchingFashion' => 'switchingfashion.com/',
-            'worldfrontnews' => 'worldfrontnews.com/',
+            'switchingfashion' => 'switchingfashion.com',
+            'worldfrontnews' => 'worldfrontnews.com',
+            'pronewsreport' => 'pronewsreport.com',
+            'spindigit' => 'spindigit.com',
+            'yorkpedia' => 'yorkpedia.com',
+            'magazineplus' => 'themagazineplus.com',
                 
             ];
 
-    //    ====================will check======================= 
+  
             if (!empty($siteName)) {
 
                 if (!isset($sites[$siteName])) {
@@ -473,14 +471,14 @@ class AuthController extends Controller
                 ]);
             }
 
-    // ====================will check after======================= 
+   
 
         $summary = [];
         $totalFetched = 0;
         $totalInserted = 0;
         $totalUpdated = 0;
       
-// dd($sites);
+
         foreach ($sites as $name => $url) {
      
                 $site = [
@@ -496,24 +494,20 @@ class AuthController extends Controller
                 $totalUpdated += $result['updated'];
             }
 
-        // dd($result);
+
 
         Cache::flush();
 
         return response()->json([
             'status' => 'success',
             'message' => 'News sync completed',
-            // 'total_fetched' => $totalFetched,
-            // 'total_inserted' => $totalInserted,
-            // 'total_updated' => $totalUpdated,
-            // 'site_summary' => $summary
         ]);
     }
 
 
     private function syncSingleSite($site)
     {
-// dd($site);
+
         $siteFetched = 0;
         $siteInserted = 0;
         $siteUpdated = 0;
@@ -526,7 +520,8 @@ class AuthController extends Controller
 
         while (true) {
 
-            $api = $site['url'] . "/wp-json/wp/v2/posts?per_page=100&page=" . $page . "&orderby=date&order=desc&_fields=id, date, link, title, content, excerpt, status, featured_media";
+            $api = $site['url'] . "/wp-json/wp/v2/posts?per_page=100&page=" . $page . "&orderby=date&order=desc&_fields=id, 
+            date, link, title, content, excerpt, status, featured_media";
 
             $response = Http::get($api);
             if ($response->successful()) {
@@ -711,11 +706,11 @@ class AuthController extends Controller
             'title' => 'required|max:255',
             'content' => 'required',
         ]);
-        // dd($id);
+    
         $post = NewsPostSites::where('news_post_id', $id)->firstOrFail();
-        // dd($post);
+
         $siteName = $post->site_name ;  //https://worldfrontnews.com/
-        // dd($siteName);
+
         $post->update([
             'post_title' => $request->title,
             'post_content' => $request->content,
@@ -731,7 +726,6 @@ class AuthController extends Controller
                 }else{
                     dd($result->json());
              }
-
 
         return redirect()
         ->route('post.edit', $id )
@@ -764,27 +758,20 @@ class AuthController extends Controller
             // if( $siteName == 'worldfrontnews' ){                
             //     $Apassword = "NXB2 bWAh 6GIf AzKG uvJW z1YP";
             // }
-            // if( $siteName == 'switchingfashion' ){                
-            //     $Apassword = "Y9vj F227 ia1o Mckf ephQ uHln";
-            // }
-            // if( $siteName == 'worldfrontnews' ){                
-            //     $Apassword = "NXB2 bWAh 6GIf AzKG uvJW z1YP";
-            // }
-
-            
+           
 
             $wp_id = $post->wp_post_id;
 
-                    $response = Http::withBasicAuth( $user, $Apassword )
-                                                ->put( $Sitename . '/wp-json/wp/v2/posts/' . $wp_id,
-                        [
-                            'title' => $post->post_title,
-                            'content' => $post->post_content,
-                            'status' => 'pending'
-                        ]);
-                
-                        return $response;
-                        }
+                $response = Http::withBasicAuth( $user, $Apassword )
+                                            ->put( $Sitename . '/wp-json/wp/v2/posts/' . $wp_id,
+                    [
+                        'title' => $post->post_title,
+                        'content' => $post->post_content,
+                        'status' => 'pending'
+                    ]);
+            
+                    return $response;
+                    }
 
                                                 
     }
