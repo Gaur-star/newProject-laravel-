@@ -441,35 +441,34 @@ class AuthController extends Controller
             'pronewsreport' => 'pronewsreport.com',
             'spindigit' => 'spindigit.com',
             'yorkpedia' => 'yorkpedia.com',
-            'magazineplus' => 'themagazineplus.com',
-                
+            'magazineplus' => 'themagazineplus.com',                
             ];
 
   
-            if (!empty($siteName)) {
+            // if (!empty($siteName)) {
 
-                if (!isset($sites[$siteName])) {
-                    return response()->json([
-                        'status' => 'error',
-                        'message' => 'Invalid site'
-                    ], 400);
-                }
+            //     if (!isset($sites[$siteName])) {
+            //         return response()->json([
+            //             'status' => 'error',
+            //             'message' => 'Invalid site'
+            //         ], 400);
+            //     }
 
-                $site = [
-                    'name' => $sites[$siteName],
-                    'url' => $sites[$siteName]
-                ];               
+            //     $site = [
+            //         'name' => $sites[$siteName],
+            //         'url' => $sites[$siteName]
+            //     ];               
 
-                $result = $this->syncSingleSite($site);
+            //     $result = $this->syncSingleSite($site);
 
-                Cache::flush();
+            //     Cache::flush();
 
-                return response()->json([
-                    'status' => 'success',
-                    'message' => $siteName . ' sync completed',
-                    'result' => $result
-                ]);
-            }
+            //     return response()->json([
+            //         'status' => 'success',
+            //         'message' => $siteName . ' sync completed',
+            //         'result' => $result
+            //     ]);
+            // }
 
    
 
@@ -481,7 +480,8 @@ class AuthController extends Controller
 
         foreach ($sites as $name => $url) {
      
-                $site = [
+              
+                 $site = [
                     'name' => $name,
                     'url' => $url
                 ];
