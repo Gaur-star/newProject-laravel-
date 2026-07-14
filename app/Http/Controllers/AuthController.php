@@ -436,39 +436,39 @@ class AuthController extends Controller
     public function syncNews($siteName = null)
     {
         $sites = [
-            'switchingfashion' => 'switchingfashion.com',
-            'worldfrontnews' => 'worldfrontnews.com',
-            'pronewsreport' => 'pronewsreport.com',
+            // 'switchingfashion' => 'switchingfashion.com',
+            // 'worldfrontnews' => 'worldfrontnews.com',
+            // 'pronewsreport' => 'pronewsreport.com',
             'spindigit' => 'spindigit.com',
             'yorkpedia' => 'yorkpedia.com',
-            'magazineplus' => 'themagazineplus.com',                
+            // 'magazineplus' => 'themagazineplus.com',                
             ];
 
   
-            // if (!empty($siteName)) {
+            if (!empty($siteName)) {
 
-            //     if (!isset($sites[$siteName])) {
-            //         return response()->json([
-            //             'status' => 'error',
-            //             'message' => 'Invalid site'
-            //         ], 400);
-            //     }
+                if (!isset($sites[$siteName])) {
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => 'Invalid site'
+                    ], 400);
+                }
 
-            //     $site = [
-            //         'name' => $sites[$siteName],
-            //         'url' => $sites[$siteName]
-            //     ];               
+                $site = [
+                    'name' => $sites[$siteName],
+                    'url' => $sites[$siteName]
+                ];               
 
-            //     $result = $this->syncSingleSite($site);
+                $result = $this->syncSingleSite($site);
 
-            //     Cache::flush();
+                Cache::flush();
 
-            //     return response()->json([
-            //         'status' => 'success',
-            //         'message' => $siteName . ' sync completed',
-            //         'result' => $result
-            //     ]);
-            // }
+                return response()->json([
+                    'status' => 'success',
+                    'message' => $siteName . ' sync completed',
+                    'result' => $result
+                ]);
+            }
 
    
 
@@ -728,8 +728,8 @@ class AuthController extends Controller
              }
 
         return redirect()
-        ->route('post.edit', $id )
-        ->with('status', 'Post updated');
+                ->route('post.edit', $id )
+                ->with('status', 'Post updated');
         
                    
     }
@@ -745,33 +745,35 @@ class AuthController extends Controller
     }
 
 
-    public function UpdateMainSitePost($id, $siteName){
+    public function UpdateMainSitePost( $id, $siteName ){
 
-            $posts = NewsPostSites::where('id', $id)
-                                    ->get();
-          
-            foreach($posts as $post){
-                        
-            $user = "editor";
-            $Sitename = 'https:://' . $siteName . '.com';  //https://worldfrontnews.com/
-            
-            // if( $siteName == 'worldfrontnews' ){                
-            //     $Apassword = "NXB2 bWAh 6GIf AzKG uvJW z1YP";
-            // }
-           
+        $posts = NewsPostSites::where('id', $id)
+                                ->get();            
+        
+        foreach($posts as $post){
+        
+        $user = "editor";
+        if( $siteName == 'spindigit' ){                
+            $Apassword = "5hN9 Wn2X vzwP Ekt7 8ACl XsTI";
+        }
 
-            $wp_id = $post->wp_post_id;
+        if( $siteName == 'yorkpedia' ){                
+            $Apassword = "nROf 1dOu ItSA kq9f JKgO 6FuI";
+        }
+        $Sitename = 'https://' . $siteName . '.com';  //https://spindigit.com/   
 
-                $response = Http::withBasicAuth( $user, $Apassword )
-                                            ->put( $Sitename . '/wp-json/wp/v2/posts/' . $wp_id,
-                    [
-                        'title' => $post->post_title,
-                        'content' => $post->post_content,
-                        'status' => 'pending'
-                    ]);
-            
-                    return $response;
-                    }
+        $wp_id = $post->wp_post_id;
+
+            $response = Http::withBasicAuth( $user, $Apassword )
+                                        ->put( $Sitename . '/wp-json/wp/v2/posts/' . $wp_id,
+                [
+                    'title' => $post->post_title,
+                    'content' => $post->post_content,
+                    'status' => 'pending'
+                ]);
+        
+                return $response;
+                }
 
                                                 
     }
