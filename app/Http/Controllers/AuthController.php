@@ -215,233 +215,18 @@ class AuthController extends Controller
     }
 
 
-    public function syncNews1($siteName = null)
-    {
-        // set_time_limit(0); 
-        // ini_set('memory_limit', '1024M'); 
-
-        // $sites = [
-        //     [
-        //         'name' => 'spindigit.com',
-        //         'url'  => 'https://spindigit.com/'
-        //     ]
-
-            
-        // ];
-
-        $sites = [
-            //  'spindigit' => 'https://spindigit.com/',
-            'pronewsreport.com' => 'https://pronewsreport.com/'
-            ];
-
-        
-            if (!empty($siteName)) {
-
-                if (!isset($sites[$siteName])) {
-                    return response()->json([
-                        'status' => 'error',
-                        'message' => 'Invalid site'
-                    ], 400);
-                }
-
-                $site = [
-                    'name' => 'spindigit',
-                    'url' => $sites[$siteName]
-                ];
-
-                $result = $this->syncSingleSite($site);
-
-                Cache::flush();
-
-                return response()->json([
-                    'status' => 'success',
-                    'message' => $siteName . ' sync completed',
-                    'result' => $result
-                ]);
-            }
-
-        $summary = [];
-        $totalFetched = 0;
-        $totalInserted = 0;
-        $totalUpdated = 0;
-
-        // foreach ($sites as $site) {
-
-        //     $siteFetched = 0;
-        //     $siteInserted = 0;
-        //     $siteUpdated = 0;
-
-        //     $page = 1;
-
-        //     while (true) {
-
-        //             $api = $site['url'] . "/wp-json/wp/v2/posts?per_page=20&page=" . $page . 
-        //  "&orderby=date&order=desc&_fields=id,date,link,title";
-        // // dd($api);
-
-        //  $response = Http::timeout(60) 
-        // ->withOptions([
-        //         'verify' => true, 
-        //         'allow_redirects' => true, 
-        //     ])
-        // ->get($api);
-
-
-        // $body = $response->body();
-        // dd($response);
-
-        // $httpCode = $response->status();
-
-
-        // if ($response->failed()) {
-
-        // $error = $response->toException();
-
-        // }
-
-        // $data = $response->json();
-                    /////////////////////////////////////
-
-                    // if ($httpCode == 400 || $httpCode == 404) {
-                    //     break;
-                    // }
-
-            
-        // $response = Http::get($site['url'] . '?page=' . $page);
-
-        // if ($response->failed()) {
-        //     $summary[] = [
-        //         'site' => $site['name'],
-        //         'error' => 'Failed on page ' . $page . 
-        //                    ' | HTTP: ' . $response->status() . 
-        //                    ' | Error: ' . $response->body()
-        //     ];
-        // }
-
-        //             $posts = json_decode($response, true);
-        // dd($posts);
-        // if (!is_array($posts) || count($posts) == 0) {
-        //     break;
-        // }
-
-        // foreach ($posts as $post) {
-
-        //     $siteFetched++;
-        //     $totalFetched++;
-
-        //     $title = trim(strip_tags($post['title']['rendered'] ?? ''));
-
-        // if ($title == '') {
-        //     continue;
-        // }
-
-        // $key = md5(strtolower($title));
-
-        // $existingPost = DB::table('news_posts')->where('unique_key', $key)->first();
-
-        // if (!$existingPost) {
-        //     $newsPostId = DB::table('news_posts')->insertGetId([
-        //         'title' => $title,
-        //         'unique_key' => $key,
-        //         'post_date' => $post['date'] ?? null,
-        //         'created_at' => now(),
-        //         'updated_at' => now()
-        //     ]);
-        //     $siteInserted++;
-        //     $totalInserted++;
-        // } else {
-        //     $newsPostId = $existingPost->id;
-
-        // DB::table('news_posts')
-        //     ->where('id', $newsPostId)
-        //     ->update([
-        //         'title' => $title,
-        //         'post_date' => $post['date'] ?? $existingPost->post_date,
-        //         'updated_at' => now()
-        //     ]);
-        //     $siteUpdated++;
-        //     $totalUpdated++;
-        // }
-
-        // $existingSite = DB::table('news_post_sites')
-        //     ->where('news_post_id', $newsPostId)
-        //     ->where('site_name', $site['name'])
-        //     ->first();
-
-        // if (!$existingSite) {
-        //         DB::table('news_post_sites')->insert([
-        //             'news_post_id' => $newsPostId,
-        //             'site_name' => $site['name'],
-        //             'post_link' => $post['link'] ?? '#',
-        //             'created_at' => now(),
-        //             'updated_at' => now()
-        //         ]);
-        //     } else {
-        //         DB::table('news_post_sites')
-        //             ->where('id', $existingSite->id)
-        //             ->update([
-        //                 'site_name' => $site['name'],
-        //                 'post_link' => $post['link'] ?? $existingSite->post_link,
-        //                 'updated_at' => now()
-        //             ]);
-        //     }
-        // }
-
-            
-        //         if (count($posts) < 100) {
-        //             break;
-        //         }
-
-        //         $page++;
-        //     }
-
-        //     $summary[] = [
-        //         'site' => $site['name'],
-        //         'fetched' => $siteFetched,
-        //         'inserted' => $siteInserted,
-        //         'updated' => $siteUpdated
-        //     ];
-        // }
-
-        foreach ($sites as $name => $url) {
-        //    dd($sites); 
-                $site = [
-                    'name' => $name,
-                    'url' => $url
-                ];
-        // dd($site);
-                $result = $this->syncSingleSite($site);
-        // dd($result);
-        // die();
-                $summary[] = $result;
-                $totalFetched += $result['fetched'];
-                $totalInserted += $result['inserted'];
-                $totalUpdated += $result['updated'];
-            }
-
-
-        Cache::flush();
-
-        return response()->json([
-            'status' => 'success',
-            'message' => 'News sync completed',
-            'total_fetched' => $totalFetched,
-            'total_inserted' => $totalInserted,
-            'total_updated' => $totalUpdated,
-            'site_summary' => $summary
-        ]);
-    }
-
-
     public function syncNews($siteName = null)
     {
+        // Cache::flush();
         $sites = [
+
+            // 'magazineplus' => 'themagazineplus.com', 
             // 'switchingfashion' => 'switchingfashion.com',
-            // 'worldfrontnews' => 'worldfrontnews.com',
-            // 'pronewsreport' => 'pronewsreport.com',
+            'worldfrontnews' => 'worldfrontnews.com',
+            'pronewsreport' => 'pronewsreport.com',
             'spindigit' => 'spindigit.com',
-            'yorkpedia' => 'yorkpedia.com',
-            // 'magazineplus' => 'themagazineplus.com',                
+            'yorkpedia' => 'yorkpedia.com'        
+
             ];
 
   
@@ -479,15 +264,18 @@ class AuthController extends Controller
       
 
         foreach ($sites as $name => $url) {
-     
+             \Log::info("Starting sync for: " . $name);
               
                  $site = [
                     'name' => $name,
                     'url' => $url
                 ];
-   
+
+                    // dd($site);
+
             $result = $this->syncSingleSite($site);
    
+
                 $summary[] = $result;
                 $totalFetched += $result['fetched'];
                 $totalInserted += $result['inserted'];
@@ -496,7 +284,7 @@ class AuthController extends Controller
 
 
 
-        Cache::flush();
+        // Cache::flush();
 
         return response()->json([
             'status' => 'success',
@@ -518,37 +306,51 @@ class AuthController extends Controller
 
         $page = 1;
 
-        while (true) {
+        // while (true) {
 
-            $api = $site['url'] . "/wp-json/wp/v2/posts?per_page=100&page=" . $page . "&orderby=date&order=desc&_fields=id, 
-            date, link, title, content, excerpt, status, featured_media";
+            $api = $site['url'] . "/wp-json/wp/v2/posts";
+            // $api = "https://switchingfashion.com/wp-json/wp/v2/posts/";
+
+            // $image = $post['_embedded']['wp:featuredmedia'][0]['source_url'] ?? null;
 
             $response = Http::get($api);
-            if ($response->successful()) {
-                $data = $response->json();
-            }            
 
-            $response = Http::timeout(60)
-                ->withoutVerifying()
-                ->get($api);
-            $httpCode = $response->status();
 
-            if ($httpCode == 400 || $httpCode == 404) {
-                break;
-            }
+//      $response = Http::withHeaders([
+//     'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+//     'Accept' => 'application/json',
+//     'Referer' => 'https://themagazineplus.com',
+// ])->get('https://themagazineplus.com/wp-json/wp/v2/posts/');
 
-            if (!$response->successful()) {
-                $errors[] = "Failed on page {$page} | HTTP {$httpCode}";
-                break;
-            }
+// dd($response->status(), $response->body());
+// dd($response->status());
+// dd($response->body());
+
+            // if ($response->successful()) {
+            //     $data = $response->json();
+            // }            
+
+            // $response = Http::timeout(60)
+            //     ->withoutVerifying()
+            //     ->get($api);
+            // $httpCode = $response->status();
+// dd($httpCode);
+            // if ($httpCode == 400 || $httpCode == 404) {
+            //     break;
+            // }
+
+            // if (!$response->successful()) {
+            //     $errors[] = "Failed on page {$page} | HTTP {$httpCode}";
+            //     break;
+            // }
 
             $posts = $response->json();           
 
-            if (!is_array($posts) || count($posts) == 0) {
-                echo "1";
-                break;
-            }
-
+            // if (!is_array($posts) || count($posts) == 0) {
+            //     echo "1";
+            //     break;
+            // }
+// dd($posts);
             foreach ($posts as $post) {
 
                 $siteFetched++;
@@ -664,12 +466,12 @@ class AuthController extends Controller
                 }
             }
 
-            if (count($posts) < 100) {
-                break;
-            }
+            // if (count($posts) < 100) {
+            //     break;
+            // }
 
-            $page++;
-        }
+            // $page++;
+        // }
 
 
         if (!empty($seenWpIds)) {
@@ -760,6 +562,15 @@ class AuthController extends Controller
         if( $siteName == 'yorkpedia' ){                
             $Apassword = "nROf 1dOu ItSA kq9f JKgO 6FuI";
         }
+
+        if( $siteName == 'worldfrontnews' ){                
+            $Apassword = "NXB2 bWAh 6GIf AzKG uvJW z1YP";
+        }
+
+        if( $siteName == 'pronewsreport' ){                
+            $Apassword = "oex1 X64d oyZF qgCK xiE2 KIme";
+        }
+
         $Sitename = 'https://' . $siteName . '.com';  //https://spindigit.com/   
 
         $wp_id = $post->wp_post_id;
