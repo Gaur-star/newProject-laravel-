@@ -222,10 +222,11 @@ class AuthController extends Controller
 
             // 'magazineplus' => 'themagazineplus.com', 
             // 'switchingfashion' => 'switchingfashion.com',
-            'worldfrontnews' => 'worldfrontnews.com',
-            'pronewsreport' => 'pronewsreport.com',
-            'spindigit' => 'spindigit.com',
-            'yorkpedia' => 'yorkpedia.com'        
+            'yourdigitalwall' => 'yourdigitalwall.com',
+            // 'worldfrontnews' => 'worldfrontnews.com',
+            // 'pronewsreport' => 'pronewsreport.com',
+            // 'spindigit' => 'spindigit.com',
+            // 'yorkpedia' => 'yorkpedia.com'        
 
             ];
 
@@ -307,8 +308,8 @@ class AuthController extends Controller
         $page = 1;
 
         // while (true) {
-
-            $api = $site['url'] . "/wp-json/wp/v2/posts";
+do {
+            $api = $site['url'] . "/wp-json/wp/v2/posts?per_page=40&page=".$page;
             // $api = "https://switchingfashion.com/wp-json/wp/v2/posts/";
 
             // $image = $post['_embedded']['wp:featuredmedia'][0]['source_url'] ?? null;
@@ -334,7 +335,7 @@ class AuthController extends Controller
             //     ->withoutVerifying()
             //     ->get($api);
             // $httpCode = $response->status();
-// dd($httpCode);
+            // dd($httpCode);
             // if ($httpCode == 400 || $httpCode == 404) {
             //     break;
             // }
@@ -350,7 +351,7 @@ class AuthController extends Controller
             //     echo "1";
             //     break;
             // }
-// dd($posts);
+            // dd($posts);
             foreach ($posts as $post) {
 
                 $siteFetched++;
@@ -466,12 +467,9 @@ class AuthController extends Controller
                 }
             }
 
-            // if (count($posts) < 100) {
-            //     break;
-            // }
-
-            // $page++;
-        // }
+           $page++;
+         } while (count($posts) > 0);
+        
 
 
         if (!empty($seenWpIds)) {
