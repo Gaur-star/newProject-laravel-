@@ -123,9 +123,9 @@
         <a href="/news-dashboard"><span class="menu-text">News Dashboard</span></a>
         {{-- <a href="/newsList"><span class="menu-text">NewsList</span></a> --}}
         <a href="/sitedetails"><span class="menu-text">Site Details</span></a>
-        <a href="/add-user"><span class="menu-text">Add User</span></a>
-        <a href="/users"><span class="menu-text">User List</span></a>
-        <a href="/UpdateSites"><span class="menu-text">UpdateSites</span></a>
+        {{-- <a href="/add-user"><span class="menu-text">Add User</span></a> --}}
+        {{-- <a href="/users"><span class="menu-text">User List</span></a> --}}
+        {{-- <a href="/UpdateSites"><span class="menu-text">UpdateSites</span></a> --}}
         <a href="/logout"><span class="menu-text">Logout</span></a>
 
     </div>
