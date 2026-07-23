@@ -223,10 +223,10 @@ class AuthController extends Controller
             // 'magazineplus' => 'themagazineplus.com', 
             // 'switchingfashion' => 'switchingfashion.com',
             'yourdigitalwall' => 'yourdigitalwall.com',
-            // 'worldfrontnews' => 'worldfrontnews.com',
-            // 'pronewsreport' => 'pronewsreport.com',
-            // 'spindigit' => 'spindigit.com',
-            // 'yorkpedia' => 'yorkpedia.com'        
+            'worldfrontnews' => 'worldfrontnews.com',
+            'pronewsreport' => 'pronewsreport.com',
+            'spindigit' => 'spindigit.com',
+            'yorkpedia' => 'yorkpedia.com'        
 
             ];
 
@@ -308,7 +308,7 @@ class AuthController extends Controller
         $page = 1;
 
         // while (true) {
-do {
+// do {
             $api = $site['url'] . "/wp-json/wp/v2/posts?per_page=40&page=".$page;
             // $api = "https://switchingfashion.com/wp-json/wp/v2/posts/";
 
@@ -467,8 +467,8 @@ do {
                 }
             }
 
-           $page++;
-         } while (count($posts) > 0);
+        //    $page++;
+        //  } while (count($posts) > 0);
         
 
 
