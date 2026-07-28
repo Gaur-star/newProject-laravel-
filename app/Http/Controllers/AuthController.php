@@ -331,18 +331,18 @@ class AuthController extends Controller
             //     $data = $response->json();
             // }            
 
-            // $response = Http::timeout(60)
+            // $response = Http::timeout(5)
             //     ->withoutVerifying()
             //     ->get($api);
             // $httpCode = $response->status();
             // dd($httpCode);
             // if ($httpCode == 400 || $httpCode == 404) {
-            //     break;
+            //     continue;
             // }
 
             // if (!$response->successful()) {
             //     $errors[] = "Failed on page {$page} | HTTP {$httpCode}";
-            //     break;
+            //     continue;
             // }
 
             $posts = $response->json();           
