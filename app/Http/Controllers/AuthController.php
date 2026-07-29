@@ -309,7 +309,7 @@ class AuthController extends Controller
 
         // while (true) {
 // do {
-            $api = $site['url'] . "/wp-json/wp/v2/posts?per_page=40&page=".$page;
+            $api = $site['url'] . "/wp-json/wp/v2/posts?per_page=100&page=".$page;
             // $api = "https://switchingfashion.com/wp-json/wp/v2/posts/";
 
             // $image = $post['_embedded']['wp:featuredmedia'][0]['source_url'] ?? null;
@@ -345,7 +345,9 @@ class AuthController extends Controller
             //     continue;
             // }
 
-            $posts = $response->json();           
+            $posts = $response->json();   
+            // $posts = $post.stringify();
+            // JSON.stringify()        
 
             // if (!is_array($posts) || count($posts) == 0) {
             //     echo "1";
