@@ -13,6 +13,8 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Artisan;
+
 
 class AuthController extends Controller
 {
@@ -93,6 +95,14 @@ class AuthController extends Controller
         if (!Auth::check()) {
             return redirect('/login');
         }
+
+        // Artisan::call('optimize:clear');
+        // Artisan::call('cache:clear');
+        // Artisan::call('config:clear');
+        // Artisan::call('config:cache');
+        // Artisan::call('view:clear');
+        // Artisan::call('view:cache');
+        // Artisan::call('route:clear');
 
         $search = request()->get('search');
         $siteFilter = request()->get('site');
@@ -178,7 +188,7 @@ class AuthController extends Controller
 
         //     $post->sites = $allSites[$post->id] ?? collect([]);
         // }
-
+// dd($posts);
         foreach ($posts as $post) {
         $post->formatted_date = !empty($post->post_date)
             ? date('d M Y, h:i A', strtotime($post->post_date))
@@ -265,7 +275,7 @@ class AuthController extends Controller
       
 
         foreach ($sites as $name => $url) {
-             \Log::info("Starting sync for: " . $name);
+            //  \Log::info("Starting sync for: " . $name);
               
                  $site = [
                     'name' => $name,
@@ -308,24 +318,24 @@ class AuthController extends Controller
         $page = 1;
 
         // while (true) {
-// do {
-            $api = $site['url'] . "/wp-json/wp/v2/posts?per_page=100&page=".$page;
-            // $api = "https://switchingfashion.com/wp-json/wp/v2/posts/";
+        // do {
+                    $api = $site['url'] . "/wp-json/wp/v2/posts?per_page=100&page=".$page;
+                    // $api = "https://switchingfashion.com/wp-json/wp/v2/posts/";
 
-            // $image = $post['_embedded']['wp:featuredmedia'][0]['source_url'] ?? null;
+                    // $image = $post['_embedded']['wp:featuredmedia'][0]['source_url'] ?? null;
 
-            $response = Http::get($api);
+                    $response = Http::get($api);
 
 
-//      $response = Http::withHeaders([
-//     'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-//     'Accept' => 'application/json',
-//     'Referer' => 'https://themagazineplus.com',
-// ])->get('https://themagazineplus.com/wp-json/wp/v2/posts/');
+        //      $response = Http::withHeaders([
+        //     'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+        //     'Accept' => 'application/json',
+        //     'Referer' => 'https://themagazineplus.com',
+        // ])->get('https://themagazineplus.com/wp-json/wp/v2/posts/');
 
-// dd($response->status(), $response->body());
-// dd($response->status());
-// dd($response->body());
+        // dd($response->status(), $response->body());
+        // dd($response->status());
+        // dd($response->body());
 
             // if ($response->successful()) {
             //     $data = $response->json();
@@ -392,9 +402,9 @@ class AuthController extends Controller
                 $groupKey = md5(strtolower($title));
 
                 $existingSitePost = DB::table('news_post_sites')
-                    ->where('site_name', $site['name'])
-                    ->where('wp_post_id', $wpPostId)
-                    ->first();
+                                        ->where('site_name', $site['name'])
+                                        ->where('wp_post_id', $wpPostId)
+                                        ->first();
 
                 if ($existingSitePost) {
 
@@ -404,6 +414,7 @@ class AuthController extends Controller
                         ->where('id', $newsPostId)
                         ->update([
                             'title' => $title,
+                            'wp_post_id' => $wpPostId,
                             'unique_key' => $groupKey,
                             'post_date' => $postDate,
                             'updated_at' => now()
@@ -424,8 +435,8 @@ class AuthController extends Controller
                 } else {
 
                     $existingMainPost = DB::table('news_posts')
-                        ->where('unique_key', $groupKey)
-                        ->first();
+                                            ->where('unique_key', $groupKey)
+                                            ->first();
 
                     if ($existingMainPost) {
                         $newsPostId = $existingMainPost->id;
@@ -440,6 +451,7 @@ class AuthController extends Controller
                     } else {
                         $newsPostId = DB::table('news_posts')->insertGetId([
                             'title' => $title,
+                            'wp_post_id' => $wpPostId,
                             'unique_key' => $groupKey,
                             'post_date' => $postDate,
                             'created_at' => now(),
@@ -450,20 +462,20 @@ class AuthController extends Controller
                   
 
                     DB::table('news_post_sites')->insert([
-                        'news_post_id' => $newsPostId,
-                        'wp_post_id' => $wpPostId,
-                        'site_name' => $site['name'],
-                        'post_title' => $title,
-                        'post_content' => $content,
-                        'post_image' => $image,
-                        'post_date' => $postDate,
-                        'post_link' => $postLink,
-                        'post_status' => $postStatus,
-                        'is_active' => 1,
-                        'created_at' => now()->format('Y-m-d'),
-                        'updated_at' => now()->format('Y-m-d'),
-                        'sync_status' => 'success',
-                    ]);
+                            'news_post_id' => $newsPostId,
+                            'wp_post_id' => $wpPostId,
+                            'site_name' => $site['name'],
+                            'post_title' => $title,
+                            'post_content' => $content,
+                            'post_image' => $image,
+                            'post_date' => $postDate,
+                            'post_link' => $postLink,
+                            'post_status' => $postStatus,
+                            'is_active' => 1,
+                            'created_at' => now()->format('Y-m-d'),
+                            'updated_at' => now()->format('Y-m-d'),
+                            'sync_status' => 'success',
+                        ]);
 
                     $siteInserted++;
                 }
@@ -476,13 +488,13 @@ class AuthController extends Controller
 
         if (!empty($seenWpIds)) {
             $deactivated = DB::table('news_post_sites')
-                ->where('site_name', $site['name'])
-                ->whereNotIn('wp_post_id', $seenWpIds)
-                ->where('is_active', 1)
-                ->update([
-                    'is_active' => 0,
-                    'updated_at' => now()
-                ]);
+                                ->where('site_name', $site['name'])
+                                ->whereNotIn('wp_post_id', $seenWpIds)
+                                ->where('is_active', 1)
+                                ->update([
+                                    'is_active' => 0,
+                                    'updated_at' => now()
+                                ]);
 
             $siteDeactivated = $deactivated;
         }
@@ -497,30 +509,36 @@ class AuthController extends Controller
         ];
     }
 
-    public function editPost($id){
-        $post = NewsPostSites::where('news_post_id', $id)->firstOrFail();
+    public function editPost(Request $request, $id){
+        dd($request);
+        $post = NewsPostSites::where('wp_post_id', $id)->firstOrFail();
+        // dd($post);
         return view('edit-post', compact('post'));
     }
 
     public function updatePost(Request $request, $id){
-       
+    //    dd($id);
         $request->validate([
             'title' => 'required|max:255',
             'content' => 'required',
         ]);
     
-        $post = NewsPostSites::where('news_post_id', $id)->firstOrFail();
-
+        $post = NewsPostSites::where('wp_post_id', $id)->firstOrFail();
+// dd($post);
         $siteName = $post->site_name ;  //https://worldfrontnews.com/
+        $id1 = $post->wp_post_id;
 
+        // dd($siteName, $id1);
+        // dd($post);
         $post->update([
             'post_title' => $request->title,
             'post_content' => $request->content,
             'sync_status' => 'pending',
             
-        ]);
+        ]); 
+       
         
-        $result = $this->UpdateMainSitePost($id, $siteName);
+        $result = $this->UpdateMainSitePost($id1, $siteName);
 
         if($result->successful()){
                 echo "Successfull";
@@ -528,6 +546,8 @@ class AuthController extends Controller
                 }else{
                     dd($result->json());
              }
+
+            
 
         return redirect()
                 ->route('post.edit', $id )
@@ -548,10 +568,11 @@ class AuthController extends Controller
 
 
     public function UpdateMainSitePost( $id, $siteName ){
-
-        $posts = NewsPostSites::where('id', $id)
+       
+// dd($id, $siteName);
+        $posts = NewsPostSites::where('wp_post_id', $id)
                                 ->get();            
-        
+        // dd($posts);
         foreach($posts as $post){
         
         $user = "editor";
@@ -571,10 +592,17 @@ class AuthController extends Controller
             $Apassword = "oex1 X64d oyZF qgCK xiE2 KIme";
         }
 
+        if( $siteName == 'worldfrontnews' ){                
+            $Apassword = "6Jyu Kxb4 Z9dc Nn1I exiI U5su";
+        }
+
+
+        
+
         $Sitename = 'https://' . $siteName . '.com';  //https://spindigit.com/   
 
-        $wp_id = $post->wp_post_id;
-
+        $wp_id = $id;
+// dd($wp_id);
             $response = Http::withBasicAuth( $user, $Apassword )
                                         ->put( $Sitename . '/wp-json/wp/v2/posts/' . $wp_id,
                 [

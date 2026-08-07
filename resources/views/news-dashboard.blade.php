@@ -124,7 +124,7 @@
                 
                     <a href="{{ $mainLink }}" target="_blank" class="post-link">
                         <div class="news-title">
-                            {{ $post->title }}
+                            {{ html_entity_decode($post->title) }}
                         </div>
                     </a>
 
@@ -218,7 +218,7 @@
                         </button>
 
                         <button class="btn btn-sm btn-light toggle-details">
-                            <a href=" {{ route('post.edit', $post->id) }}">
+                            <a href=" {{ route('post.edit', $post->wp_post_id) }}">
                                 EDIT POST
                             </a>                            
                         </button>

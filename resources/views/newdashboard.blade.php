@@ -105,7 +105,7 @@
             
                 <a href="{{ $mainLink }}" target="_blank" class="post-link">
                     <div class="news-title">
-                        {{ $post->title }}
+                        {{ $post->titles }}
                     </div>
                 </a>
 

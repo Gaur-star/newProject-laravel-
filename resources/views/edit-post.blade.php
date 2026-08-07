@@ -19,14 +19,14 @@
                     {{ session('status') }}
                 </div>
             @endif
-        <form action="{{ route('post.update', $post->news_post_id) }}" method="POST" enctype="multipart/form-data">
+        <form action="{{ route('post.update', $post->wp_post_id) }}" method="POST" enctype="multipart/form-data">
             @csrf
 
-            <input type="hidden" name="post_id" value="{{ $post->news_post_id }}">
+            <input type="hidden" name="post_id" value="{{ $post->wp_post_id }}">
 
             <div class="form-group">
                 <label for="post-title">Post Title</label>
-                <input type="text" id="post-title" name="title" value="{{ $post->post_title }}" required>
+                <input type="text" id="post-title" name="title" value="{{ html_entity_decode($post->post_title) }}" required>
             </div>
 
             {{-- <div class="form-group">
