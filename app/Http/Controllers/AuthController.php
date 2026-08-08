@@ -232,7 +232,7 @@ class AuthController extends Controller
 
             // 'magazineplus' => 'themagazineplus.com', 
             // 'switchingfashion' => 'switchingfashion.com',
-            'yourdigitalwall' => 'yourdigitalwall.com',
+            // 'yourdigitalwall' => 'yourdigitalwall.com',
             'worldfrontnews' => 'worldfrontnews.com',
             'pronewsreport' => 'pronewsreport.com',
             'spindigit' => 'spindigit.com',
@@ -455,7 +455,8 @@ class AuthController extends Controller
                             'unique_key' => $groupKey,
                             'post_date' => $postDate,
                             'created_at' => now(),
-                            'updated_at' => now()
+                            'updated_at' => now(),
+                            'post_id' => $site['name'] . $wpPostId
                         ]);
                     }
 
@@ -475,6 +476,7 @@ class AuthController extends Controller
                             'created_at' => now()->format('Y-m-d'),
                             'updated_at' => now()->format('Y-m-d'),
                             'sync_status' => 'success',
+                            'post_id' => $site['name'] . $wpPostId
                         ]);
 
                     $siteInserted++;
@@ -510,8 +512,8 @@ class AuthController extends Controller
     }
 
     public function editPost(Request $request, $id){
-        dd($request);
-        $post = NewsPostSites::where('wp_post_id', $id)->firstOrFail();
+        // dd($request);
+        $post = NewsPostSites::where('post_id', $id)->firstOrFail();
         // dd($post);
         return view('edit-post', compact('post'));
     }
@@ -523,7 +525,7 @@ class AuthController extends Controller
             'content' => 'required',
         ]);
     
-        $post = NewsPostSites::where('wp_post_id', $id)->firstOrFail();
+        $post = NewsPostSites::where('post_id', $id)->firstOrFail();
 // dd($post);
         $siteName = $post->site_name ;  //https://worldfrontnews.com/
         $id1 = $post->wp_post_id;
@@ -622,3 +624,11 @@ class AuthController extends Controller
 
 
 }
+
+////////////////
+// preg_match('/^([a-zA-Z]+)(\d+)$/', $id, $matches);
+
+//     $prefix = $matches[1]; // spindigit
+//     $number = $matches[2]; // 16624
+
+//     $postId = $prefix . '/' . $number;

@@ -218,7 +218,7 @@
                         </button>
 
                         <button class="btn btn-sm btn-light toggle-details">
-                            <a href=" {{ route('post.edit', $post->wp_post_id) }}">
+                            <a href=" {{ route('post.edit', $post->post_id) }}">
                                 EDIT POST
                             </a>                            
                         </button>
